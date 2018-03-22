@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context="com.example.fahad.publicservices.ContactUs">
+
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:layout_margin="15sp"
+        android:padding="10sp"
+        android:orientation="vertical">
+
+        <EditText
+            android:id="@+id/subject"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:drawableRight="@drawable/gmail"
+            android:padding="20sp"
+            android:inputType="text"
+            android:maxLines="1"
+            android:hint="Subject"
+            android:textSize="20sp"/>
+
+        <EditText
+            android:id="@+id/massege"
+            android:layout_width="match_parent"
+            android:layout_height="200sp"
+            android:inputType="text"
+            android:maxLines="8"
+            android:background="@color/emailMassege"
+            android:layout_marginTop="20sp"
+            android:hint="Enter your massege"
+            android:textSize="20sp"
+            android:gravity="start"/>
+
+        <Button
+            android:id="@+id/btnSend"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:drawableTop="@drawable/message"
+            android:layout_marginTop="40sp"
+            android:text="SEND"
+            android:textSize="20sp"/>
+
+
+
+    </LinearLayout>
+
+
+</LinearLayout>

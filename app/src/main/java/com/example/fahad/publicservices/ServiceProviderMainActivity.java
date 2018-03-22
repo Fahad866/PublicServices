@@ -159,7 +159,6 @@ public class ServiceProviderMainActivity extends AppCompatActivity {
         final MaterialEditText edtPassword = register_layout.findViewById(R.id.edtPassword);
         final MaterialEditText edtName = register_layout.findViewById(R.id.edtName);
         final MaterialEditText edtPhone = register_layout.findViewById(R.id.edtPhone);
-        final MaterialEditText edtService = register_layout.findViewById(R.id.edtService);
 
         dialog.setView(register_layout);
 
@@ -206,16 +205,17 @@ public class ServiceProviderMainActivity extends AppCompatActivity {
                         user.setPassword(edtPassword.getText().toString());
                         user.setName(edtName.getText().toString());
                         user.setPhone(edtPhone.getText().toString());
-                        user.setService(edtService.getText().toString());
 
 
-                        String serv = user.getService();
+
 
 
                         FirebaseDatabase.getInstance().getReference().child("Users").child("ServiceProvider").child(FirebaseAuth.getInstance().getCurrentUser().getUid()).setValue(user).addOnSuccessListener(new OnSuccessListener<Void>() {
                             @Override
                             public void onSuccess(Void aVoid) {
                                 Snackbar.make(rootLayout , "Register successfuly" , Snackbar.LENGTH_SHORT).show();
+                                Intent intent = new Intent(ServiceProviderMainActivity.this , SelectService.class);
+                                startActivity(intent);
                             }
                         })
                                 .addOnFailureListener(new OnFailureListener() {

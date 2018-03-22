@@ -27,10 +27,6 @@ public class UserMainPage extends AppCompatActivity {
         Contact_Us = (Button) findViewById(R.id.Contact_Us);
         Log_Out = (Button) findViewById(R.id.Log_Out);
 
-        //init firebase
-        auth = FirebaseAuth.getInstance();
-        Customer = FirebaseDatabase.getInstance().getReference().child("Users").child("Customer");
-
         Edit_Profile.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -38,6 +34,17 @@ public class UserMainPage extends AppCompatActivity {
                 startActivity(intent);
             }
         });
+
+        //================================================================================
+
+        Contact_Us.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(UserMainPage.this , ContactUs.class);
+                startActivity(intent);
+            }
+        });
+
 
     }
 }
