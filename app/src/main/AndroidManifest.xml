@@ -27,7 +27,8 @@
         <activity android:name=".CustomerMainActivity" />
         <activity android:name=".ServiceProviderMainActivity" />
 
-           <!--  The API key for Google Maps-based APIs is defined as a string resource.
+        <!--
+             The API key for Google Maps-based APIs is defined as a string resource.
              (See the file "res/values/google_maps_api.xml").
              Note that the API key is linked to the encryption key used to sign the APK.
              You need a different API key for each encryption key, including the release key that is used to
@@ -48,6 +49,8 @@
         <activity android:name=".EditProfile" />
         <activity android:name=".ContactUs" />
         <activity android:name=".SelectService" />
+        <activity android:name=".ServiceProviderMainPage" />
+        <activity android:name=".ForgetPassword"></activity>
     </application>
 
 </manifest>

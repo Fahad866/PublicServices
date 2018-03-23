@@ -38,9 +38,9 @@ public class EditProfile extends AppCompatActivity {
     Button btnSubmit;
     ImageView image;
     private Uri resultUri ;
-    private String memail , mphone , mpassword , mname , mProfileUrl;
+    private String  mphone , mpassword , mname , mProfileUrl;
 
-
+    private String accountType ;
     private FirebaseAuth mAthu;
     private DatabaseReference mUserDatabase;
     private String userID ;
@@ -56,11 +56,12 @@ public class EditProfile extends AppCompatActivity {
         edtPhone = (EditText)findViewById(R.id.edtPhone);
         image = (ImageView)findViewById(R.id.image);
         btnSubmit = (Button)findViewById(R.id.btnSubmit);
+        accountType = getIntent().getStringExtra("accountType");
 
         //init firebase
         mAthu = FirebaseAuth.getInstance();
         userID= mAthu.getCurrentUser().getUid();
-        mUserDatabase= FirebaseDatabase.getInstance().getReference().child("Users").child("Customer").child(userID);
+        mUserDatabase= FirebaseDatabase.getInstance().getReference().child("Users").child(accountType).child(userID);
 
         getUserinfo();
 
@@ -93,10 +94,7 @@ public class EditProfile extends AppCompatActivity {
                     Map<String , Object> map=(Map<String , Object>)dataSnapshot.getValue();
                     //if any an correct plase cheke name db
 
-                    /*if (map.get("email")!=null){
-                        memail=map.get("email").toString();
-                        edtEmail.setText(memail);
-                    }*/
+
                     if (map.get("password")!=null){
                         mpassword=map.get("password").toString();
                         edtPassword.setText(mpassword);
@@ -125,13 +123,11 @@ public class EditProfile extends AppCompatActivity {
 
     private void saveUserInfo() {
 
-        //memail=edtEmail.getText().toString();
         mpassword=edtPassword.getText().toString();
         mname=edtName.getText().toString();
         mphone=edtPhone.getText().toString();
 
         Map userInfo = new HashMap();
-        userInfo.put("email",memail);
         userInfo.put("phone",mphone);
         userInfo.put("password",mpassword);
         userInfo.put("name",mname);

@@ -75,70 +75,105 @@
         </LinearLayout>
 
         <!-- ============================================================================== -->
-        <android.support.v7.widget.CardView
+
+
+        <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="wrap_content">
+            android:layout_height="wrap_content"
+            android:background="@android:color/white"
+            android:orientation="vertical">
+
             <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@android:color/white"
                 android:orientation="vertical"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center">
-            <RadioGroup
-                android:id="@+id/radioGroup"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="horizontal"/>
-            <RadioButton
-                android:id="@+id/electration"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="electration" />
+                android:padding="8dp">
 
-            <RadioButton
-                android:id="@+id/CarWash"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="carwash"/>
-            <RadioButton
-                android:id="@+id/carfix"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="carfix"/>
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="Please choose service "
+                    android:gravity="center"/>
+
+                <HorizontalScrollView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content">
+
+
+                    <RadioGroup
+                        android:id="@+id/radioGroup"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal">
+
+
+                        <RadioButton
+                            android:id="@+id/electration"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="electration" />
+
+                        <RadioButton
+                            android:id="@+id/CarWash"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="carwash" />
+
+                        <RadioButton
+                            android:id="@+id/carfix"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="carfix" />
+
+                        <RadioButton
+                            android:id="@+id/plumber"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="plumber" />
+
+                        <RadioButton
+                            android:id="@+id/barber"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:text="barber" />
+
+                        <RadioButton
+                            android:id="@+id/carpenter"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="carpenter" />
+
+                        <RadioButton
+                            android:id="@+id/mobileRepair"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="mobilerepair" />
+
+                        <RadioButton
+                            android:id="@+id/doctor"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="doctor" />
+
+                    </RadioGroup>
+                </HorizontalScrollView>
             </LinearLayout>
 
-        </android.support.v7.widget.CardView>
-
-
-
-        <android.support.v7.widget.CardView
-            app:cardElevation="10dp"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content">
-
-            <LinearLayout
-                android:orientation="horizontal"
-                android:weightSum="10"
-                android:layout_margin="16dp"
+            <Button
+                android:id="@+id/btn_call_worker"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content">
+                android:layout_height="wrap_content"
+                android:layout_gravity="bottom"
+                android:text="Call Worker" />
+        </LinearLayout>
 
-                <Button
-                    android:id="@+id/btn_logout"
-                    android:layout_weight="5"
-                    android:text="Logout"
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content" />
 
-                <Button
-                    android:id="@+id/btn_call_worker"
-                    android:layout_weight="5"
-                    android:text="Call worker"
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content" />
 
-            </LinearLayout>
 
-        </android.support.v7.widget.CardView>
+
+
+
 
 
 

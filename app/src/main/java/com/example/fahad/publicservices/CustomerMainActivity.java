@@ -12,6 +12,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.Button;
 import android.widget.RelativeLayout;
+import android.widget.TextView;
 
 import com.example.fahad.publicservices.model.User;
 import com.google.android.gms.tasks.OnFailureListener;
@@ -30,6 +31,7 @@ public class CustomerMainActivity extends AppCompatActivity {
     RelativeLayout rootLayout;
     FirebaseAuth auth;
     DatabaseReference Customer;
+    TextView forgetPassword;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -40,6 +42,7 @@ public class CustomerMainActivity extends AppCompatActivity {
         btnSignIn = (Button)findViewById(R.id.btnSignIn);
         btnRegister = (Button)findViewById(R.id.btnRegister);
         rootLayout = (RelativeLayout)findViewById(R.id.rootLayout);
+        forgetPassword = (TextView)findViewById(R.id.forgetPassword);
 
         //init firebase
         auth = FirebaseAuth.getInstance();
@@ -62,8 +65,16 @@ public class CustomerMainActivity extends AppCompatActivity {
             }
         });
 
+        forgetPassword.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                forgetPassword();
+            }
+        });
+
 
     }
+
 
 //-----------------------------------------------------------------------------------------
 
@@ -77,8 +88,8 @@ public class CustomerMainActivity extends AppCompatActivity {
         final MaterialEditText edtEmail = signin_layout.findViewById(R.id.edtEmail);
         final MaterialEditText edtPassword = signin_layout.findViewById(R.id.edtPassword);
 
-
         dialog.setView(signin_layout);
+
 
         //set button
         dialog.setPositiveButton("SIGN IN", new DialogInterface.OnClickListener() {
@@ -235,5 +246,12 @@ public class CustomerMainActivity extends AppCompatActivity {
         });
 
         dialog.show();
+    }
+
+    //-----------------------------------------------------------------------------------------
+
+    private void forgetPassword(){
+        Intent intent = new Intent(CustomerMainActivity.this , ForgetPassword.class);
+        startActivity(intent);
     }
 }

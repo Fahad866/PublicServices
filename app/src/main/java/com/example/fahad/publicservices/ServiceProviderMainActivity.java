@@ -12,6 +12,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.Button;
 import android.widget.RelativeLayout;
+import android.widget.TextView;
 
 import com.example.fahad.publicservices.model.User;
 import com.google.android.gms.tasks.OnFailureListener;
@@ -30,6 +31,7 @@ public class ServiceProviderMainActivity extends AppCompatActivity {
     RelativeLayout rootLayout;
     FirebaseAuth auth;
     DatabaseReference ServiceProvider;
+    TextView forgetPassword;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -40,6 +42,7 @@ public class ServiceProviderMainActivity extends AppCompatActivity {
         btnSignIn = (Button)findViewById(R.id.btnSignIn);
         btnRegister = (Button)findViewById(R.id.btnRegister);
         rootLayout = (RelativeLayout)findViewById(R.id.rootLayout);
+        forgetPassword = (TextView)findViewById(R.id.forgetPassword);
 
 
         //init firebase
@@ -60,6 +63,13 @@ public class ServiceProviderMainActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 showSignInDialog();
+            }
+        });
+
+        forgetPassword.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                forgetPassword();
             }
         });
 
@@ -117,7 +127,7 @@ public class ServiceProviderMainActivity extends AppCompatActivity {
                     @Override
                     public void onSuccess(AuthResult authResult) {
                        // waitingDialog.dismiss();
-                        startActivity(new Intent(ServiceProviderMainActivity.this , ServiceProviderMapsActivity.class));
+                        startActivity(new Intent(ServiceProviderMainActivity.this , ServiceProviderMainPage.class));
                         finish();
                     }
                 })
@@ -245,5 +255,12 @@ public class ServiceProviderMainActivity extends AppCompatActivity {
         });
 
         dialog.show();
+    }
+
+    //-----------------------------------------------------------------------------------------
+
+    private void forgetPassword(){
+        Intent intent = new Intent(ServiceProviderMainActivity.this , ForgetPassword.class);
+        startActivity(intent);
     }
 }
