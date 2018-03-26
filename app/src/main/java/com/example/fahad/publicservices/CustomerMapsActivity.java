@@ -68,7 +68,7 @@ public class CustomerMapsActivity extends FragmentActivity implements OnMapReady
     Location mLastLocation;
     LocationRequest mLocationRequest;
     SupportMapFragment mapFragment;
-    private Button mRequest;
+    private Button mRequest , gotIt;
     private LatLng pickupLocation;
 
     private Boolean requestBol = false;
@@ -77,9 +77,9 @@ public class CustomerMapsActivity extends FragmentActivity implements OnMapReady
     private String distination;
     private String requestService;
 
-    private LinearLayout mDriverInfo;
+    private LinearLayout mDriverInfo , DriverInfoTop;
     private ImageView mDriverProfileImage;
-    private TextView mDriverName , mDriverPhone ;
+    private TextView mDriverName , mDriverPhone , mDriverNameTop , mDriverPhoneTop ;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -95,15 +95,27 @@ public class CustomerMapsActivity extends FragmentActivity implements OnMapReady
             mapFragment.getMapAsync(this);//start map
         }
         mDriverInfo = (LinearLayout)findViewById(R.id.DriverInfo);
+        DriverInfoTop = (LinearLayout)findViewById(R.id.DriverInfoTop);
         mDriverProfileImage = (ImageView) findViewById(R.id.DriverProfileImage);
         mDriverName = (TextView) findViewById(R.id.DriverName);
         mDriverPhone  = (TextView) findViewById(R.id.DriverPhone);
+        mDriverNameTop = (TextView) findViewById(R.id.DriverNameTop);
+        mDriverPhoneTop  = (TextView) findViewById(R.id.DriverPhoneTop);
 
         //__________________________________________
         mRadioGroup = (RadioGroup)findViewById(R.id.radioGroup);
         mRadioGroup.check(R.id.carfix);
 
         mRequest= (Button)findViewById(R.id.btn_call_worker);
+        gotIt = (Button)findViewById(R.id.gotIt);
+
+        gotIt.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                mDriverInfo.setVisibility(View.GONE);
+                DriverInfoTop.setVisibility(View.VISIBLE);
+            }
+        });
 
         mRequest.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -128,7 +140,7 @@ public class CustomerMapsActivity extends FragmentActivity implements OnMapReady
                     geoFire.setLocation(userId, new GeoLocation(mLastLocation.getLatitude(), mLastLocation.getLongitude()));
 
                     pickupLocation = new LatLng(mLastLocation.getLatitude(), mLastLocation.getLongitude());
-                    pickupMarker = mMap.addMarker(new MarkerOptions().position(pickupLocation).title("Pickup Here"));//.icon(BitmapDescriptorFactory.fromResource(R.mipmap.ic_homeu))
+                    pickupMarker = mMap.addMarker(new MarkerOptions().position(pickupLocation).title("Pickup Here").icon(BitmapDescriptorFactory.fromResource(R.drawable.pin)));
 
                     mRequest.setText("Getting your Driver....");
                     getClosestService();
@@ -139,19 +151,7 @@ public class CustomerMapsActivity extends FragmentActivity implements OnMapReady
             }
         });
 
-        PlaceAutocompleteFragment autocompleteFragment = (PlaceAutocompleteFragment)
-                getFragmentManager().findFragmentById(R.id.place_autocomplete_fragment);
 
-        autocompleteFragment.setOnPlaceSelectedListener(new PlaceSelectionListener() {
-            @Override
-            public void onPlaceSelected(Place place) {
-                distination = place.getName().toString();
-            }
-            @Override
-            public void onError(Status status) {
-                // TODO: Handle the error.
-            }
-        });
     }
 
     //// for service info*/
@@ -162,7 +162,7 @@ public class CustomerMapsActivity extends FragmentActivity implements OnMapReady
 
     GeoQuery geoQuery;
     private void getClosestService(){
-        DatabaseReference serviclocation = FirebaseDatabase.getInstance().getReference().child("ServiceProvider");
+        DatabaseReference serviclocation = FirebaseDatabase.getInstance().getReference().child("servierAvailable");
 
         GeoFire geoFire = new GeoFire(serviclocation);
         geoQuery = geoFire.queryAtLocation(new GeoLocation(pickupLocation.latitude,pickupLocation.longitude),radius);
@@ -252,8 +252,7 @@ public class CustomerMapsActivity extends FragmentActivity implements OnMapReady
                     if(nServiceMarker != null){
                         nServiceMarker.remove();
                     }
-                    nServiceMarker = mMap.addMarker(new MarkerOptions().position(driverLatLng).title("your driver"));//.icon(BitmapDescriptorFactory.fromResource(R.mipmap.ic_mse))
-
+                    nServiceMarker = mMap.addMarker(new MarkerOptions().position(driverLatLng).title("your driver").icon(BitmapDescriptorFactory.fromResource(R.drawable.car)));
                     Location loc1 = new Location("");
                     loc1.setLatitude(pickupLocation.latitude);
                     loc1.setLongitude(pickupLocation.longitude);
@@ -291,9 +290,11 @@ public class CustomerMapsActivity extends FragmentActivity implements OnMapReady
                     }
                     if (map.get("name")!=null){
                         mDriverName.setText(map.get("name").toString());
+                        mDriverNameTop.setText(map.get("name").toString());
                     }
                     if (map.get("phone")!=null) {
                         mDriverPhone.setText(map.get("phone").toString());
+                        mDriverPhoneTop.setText(map.get("phone").toString());
                     }
                 }
             }

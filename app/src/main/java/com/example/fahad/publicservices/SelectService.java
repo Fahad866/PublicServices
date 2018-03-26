@@ -46,7 +46,8 @@ public class SelectService extends AppCompatActivity {
             public void onClick(View v) {
                 Map userInfo = new HashMap();
                 userInfo.put("service","barber");
-                Intent intent = new Intent(SelectService.this , ServiceProviderMapsActivity.class);
+                mServiceDatabase.updateChildren(userInfo);
+                Intent intent = new Intent(SelectService.this , ServiceProviderMainActivity.class);
                 startActivity(intent);
             }
         });
@@ -58,75 +59,92 @@ public class SelectService extends AppCompatActivity {
             public void onClick(View v) {
                 Map userInfo = new HashMap();
                 userInfo.put("service","carpenter");
-                Intent intent = new Intent(SelectService.this , ServiceProviderMapsActivity.class);
+                mServiceDatabase.updateChildren(userInfo);
+                Intent intent = new Intent(SelectService.this , ServiceProviderMainActivity.class);
                 startActivity(intent);
             }
         });
 
         //========================================================
 
-        barber.setOnClickListener(new View.OnClickListener() {
+        doctor.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-
+                Map userInfo = new HashMap();
+                userInfo.put("service","doctor");
+                mServiceDatabase.updateChildren(userInfo);
+                Intent intent = new Intent(SelectService.this , ServiceProviderMainActivity.class);
+                startActivity(intent);
             }
         });
 
         //========================================================
 
-        barber.setOnClickListener(new View.OnClickListener() {
+        car_wash.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-
+                Map userInfo = new HashMap();
+                userInfo.put("service","car_wash");
+                mServiceDatabase.updateChildren(userInfo);
+                Intent intent = new Intent(SelectService.this , ServiceProviderMainActivity.class);
+                startActivity(intent);
             }
         });
 
         //========================================================
 
-        barber.setOnClickListener(new View.OnClickListener() {
+        car_fix.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-
+                Map userInfo = new HashMap();
+                userInfo.put("service","car_fix");
+                mServiceDatabase.updateChildren(userInfo);
+                Intent intent = new Intent(SelectService.this , ServiceProviderMainActivity.class);
+                startActivity(intent);
             }
         });
 
         //========================================================
 
-        barber.setOnClickListener(new View.OnClickListener() {
+        mobile_repair.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-
+                Map userInfo = new HashMap();
+                userInfo.put("service","mobile_repair");
+                mServiceDatabase.updateChildren(userInfo);
+                Intent intent = new Intent(SelectService.this , ServiceProviderMainActivity.class);
+                startActivity(intent);
             }
         });
 
         //========================================================
 
-        barber.setOnClickListener(new View.OnClickListener() {
+        plumber.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-
+                Map userInfo = new HashMap();
+                userInfo.put("service","plumber");
+                mServiceDatabase.updateChildren(userInfo);
+                Intent intent = new Intent(SelectService.this , ServiceProviderMainActivity.class);
+                startActivity(intent);
             }
         });
 
         //========================================================
 
-        barber.setOnClickListener(new View.OnClickListener() {
+        electrician.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-
+                Map userInfo = new HashMap();
+                userInfo.put("service","electrician");
+                mServiceDatabase.updateChildren(userInfo);
+                Intent intent = new Intent(SelectService.this , ServiceProviderMainActivity.class);
+                startActivity(intent);
             }
         });
 
         //========================================================
 
-        barber.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-
-            }
-        });
-
-        //========================================================
 
     }
 }

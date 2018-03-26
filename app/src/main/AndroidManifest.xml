@@ -37,7 +37,7 @@
         -->
         <meta-data
             android:name="com.google.android.geo.API_KEY"
-            android:value="AIzaSyCMpodsZCaUXwJhqNRL1eo344-2wAvZvKI" />
+            android:value="AIzaSyD-MjpZx3mXQeA8yQqA6x3XEStMAqWj3do" />
 
         <activity
             android:name=".ServiceProviderMapsActivity"
@@ -50,7 +50,8 @@
         <activity android:name=".ContactUs" />
         <activity android:name=".SelectService" />
         <activity android:name=".ServiceProviderMainPage" />
-        <activity android:name=".ForgetPassword"></activity>
+        <activity android:name=".ForgetPassword" />
+        <activity android:name=".Customer_Service_details"></activity>
     </application>
 
 </manifest>

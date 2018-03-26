@@ -48,7 +48,7 @@ public class UserMainPage extends AppCompatActivity {
         Request_Services.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent = new Intent(UserMainPage.this , CustomerMapsActivity.class);
+                Intent intent = new Intent(UserMainPage.this , Customer_Service_details.class);
                 startActivity(intent);
             }
         });

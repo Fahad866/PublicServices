@@ -7,26 +7,37 @@
     android:layout_height="match_parent"
     tools:context="com.example.fahad.publicservices.CustomerMapsActivity">
 
-    <RelativeLayout
+
+
+    <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
-
-        <android.support.v7.widget.CardView
-            android:layout_alignParentTop="true"
-            android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/DriverInfoTop"
+        android:orientation="horizontal"
+        android:background="@color/white"
+        android:layout_gravity="top"
+        android:padding="10sp"
+        android:visibility="gone">
+        <TextView
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_margin="20sp">
-
-            <fragment
-                android:id="@+id/place_autocomplete_fragment"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:name="com.google.android.gms.location.places.ui.PlaceAutocompleteFragment" />
-
-        </android.support.v7.widget.CardView>
-
-    </RelativeLayout>
-
+            android:gravity="center"
+            android:layout_marginLeft="75sp"
+            android:textSize="17sp"
+            android:textColor="@color/black"
+            android:id="@+id/DriverNameTop"
+            android:drawableLeft="@drawable/person" />
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:layout_marginLeft="40sp"
+            android:textSize="17sp"
+            android:textColor="@color/black"
+            android:id="@+id/DriverPhoneTop"
+            android:drawableLeft="@drawable/phone"
+            />
+    </LinearLayout>
 
 
 
@@ -35,42 +46,52 @@
         android:layout_height="wrap_content"
         android:orientation="vertical"
         android:layout_gravity="bottom">
+
+
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginBottom="23sp"
             android:id="@+id/DriverInfo"
-            android:layout_gravity="bottom"
-            android:orientation="horizontal"
+            android:layout_gravity="center"
+            android:layout_margin="20sp"
+            android:orientation="vertical"
             android:background="@android:color/white"
             android:visibility="gone">
             <ImageView
-                android:layout_width="100sp"
-                android:layout_height="100sp"
+                android:layout_width="150sp"
+                android:layout_height="150sp"
+                android:layout_gravity="center"
                 android:id="@+id/DriverProfileImage"
                 android:src="@drawable/profile"
-                android:padding="20sp"/>
-            <LinearLayout
+                android:padding="10sp"/>
+            <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:orientation="vertical"
-                android:paddingLeft="40sp">
+                android:layout_gravity="center"
+                android:textSize="30sp"
+                android:textColor="@color/black"
+                android:id="@+id/DriverName"
+                android:drawableLeft="@drawable/person"
+                 />
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:textSize="30sp"
+                android:textColor="@color/black"
+                android:id="@+id/DriverPhone"
+                android:drawableLeft="@drawable/phone"
+                android:padding="10sp"/>
+            <Button
+                android:id="@+id/gotIt"
+                android:layout_gravity="center"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="10sp"
+                android:text="GOT IT"/>
 
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:id="@+id/DriverName"
-                    android:paddingBottom="10sp"
-                    android:paddingTop="20sp"/>
 
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:id="@+id/DriverPhone"
-                    android:paddingBottom="10sp"
-                    android:paddingTop="20sp"/>
 
-            </LinearLayout>
 
         </LinearLayout>
 
@@ -80,6 +101,7 @@
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:layout_marginTop="30sp"
             android:background="@android:color/white"
             android:orientation="vertical">
 
@@ -183,4 +205,3 @@
 
 
 </fragment>
-
