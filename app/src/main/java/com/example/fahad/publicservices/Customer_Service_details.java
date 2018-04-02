@@ -31,9 +31,11 @@ import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 
+import de.hdodenhof.circleimageview.CircleImageView;
+
 public class Customer_Service_details extends AppCompatActivity {
     private EditText mTexeProblem;
-    private ImageView mImageProblem;
+    private CircleImageView mImageProblem;
     private Button mConfirm;
     private FirebaseAuth mAthu;
     private DatabaseReference mUserDatabase;
@@ -47,14 +49,14 @@ public class Customer_Service_details extends AppCompatActivity {
         setContentView(R.layout.customer_service_details);
 
         mTexeProblem = (EditText)findViewById(R.id.TextProblem);
-        mImageProblem = (ImageView)findViewById(R.id.imageProblem) ;
+        mImageProblem = (CircleImageView)findViewById(R.id.imageProblem) ;
         mConfirm = (Button)findViewById(R.id.Confirm);
 
 
         mAthu = FirebaseAuth.getInstance();
         userID= mAthu.getCurrentUser().getUid();
         mUserDatabase= FirebaseDatabase.getInstance().getReference().child("Users").child("Customer").child(userID);
-        getUserinfo();
+
         mImageProblem.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -76,29 +78,7 @@ public class Customer_Service_details extends AppCompatActivity {
 
     }
 
-    private void getUserinfo(){
-        mUserDatabase.addValueEventListener(new ValueEventListener() {
-            @Override
-            public void onDataChange(DataSnapshot dataSnapshot) {
-                if (dataSnapshot.exists() && dataSnapshot.getChildrenCount()>0){
-                    //if alredy name same in db
-                    Map<String , Object> map=(Map<String , Object>)dataSnapshot.getValue();
-                    //if any an correct plase cheke name db
-                    if (map.get("Text")!=null){
-                        textprblem=map.get("Text").toString();
-                        mTexeProblem.setText(textprblem);
-                    }
-                    if (map.get("problemImage")!=null) {
-                        mProblemUrl = map.get("problemImage").toString();
-                        Glide.with(getApplication()).load(mProblemUrl).into(mImageProblem);
-                    }
-                }
-            }
-            @Override
-            public void onCancelled(DatabaseError databaseError) {
-            }
-        });
-    }
+
     //save to db
     private void saveUserInfo() {
         textprblem=mTexeProblem.getText().toString();
@@ -106,7 +86,7 @@ public class Customer_Service_details extends AppCompatActivity {
         userInfo.put("Text",textprblem);
         mUserDatabase.updateChildren(userInfo);
         if (resultUri!=null){//save image in db
-            StorageReference filePath = FirebaseStorage.getInstance().getReference().child("Profile_Image ").child(userID);//like dbrefrence
+            StorageReference filePath = FirebaseStorage.getInstance().getReference().child("Image Problem").child(userID);//like dbrefrence
             Bitmap bitmap=null;
             try {
                 bitmap = MediaStore.Images.Media.getBitmap(getApplication().getContentResolver(),resultUri);

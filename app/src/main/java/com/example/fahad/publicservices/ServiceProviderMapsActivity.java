@@ -18,11 +18,15 @@ import android.support.annotation.Nullable;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.FragmentActivity;
 import android.os.Bundle;
+import android.telephony.SmsMessage;
 import android.view.View;
 import android.widget.Button;
+import android.widget.CompoundButton;
+import android.widget.EditText;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.Switch;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -48,6 +52,7 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
+import com.jcminarro.roundkornerlayout.RoundKornerLinearLayout;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -65,9 +70,10 @@ public class ServiceProviderMapsActivity extends FragmentActivity implements OnM
     GoogleApiClient mGoogleApiClient;
     Location mLastLocation;
     private LatLng destinationLatLang;
+    private Switch workingS ;
     LocationRequest mLocationRequest;
     private int status = 0 ;
-    private Button mWorkStatus , gotIt;
+    private Button mWorkStatus , gotIt , Submit;
     private String userID="";//customerID
     private Boolean isLoggingOut = false;
     SupportMapFragment mapFragment;
@@ -75,9 +81,12 @@ public class ServiceProviderMapsActivity extends FragmentActivity implements OnM
 
     //_____________________________
     //this for desplay the information user //can send photo and text 1
-    private LinearLayout userproblem , userinfo;
+    private LinearLayout userinfo ;
+    private RoundKornerLinearLayout userproblem , payment;
     private ImageView mUserproblemImage;// can send image for problem
     private TextView muserText ,mph,mname , mUserDestination ;//can send text
+    private String mprice;
+    private EditText price;
     // ____________________________
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -94,17 +103,31 @@ public class ServiceProviderMapsActivity extends FragmentActivity implements OnM
         }
         //contune foe displsy 2
 
-        gotIt = (Button)findViewById(R.id.gotIt);
+
         userinfo = (LinearLayout)findViewById(R.id.userinfo);
-        userproblem = (LinearLayout)findViewById(R.id.userproblem);
+        userproblem = (RoundKornerLinearLayout)findViewById(R.id.userproblem);
+        payment = (RoundKornerLinearLayout)findViewById(R.id.payment);
         mUserproblemImage = (ImageView) findViewById(R.id.userimageProblem);
         muserText = (TextView) findViewById(R.id.userTextProblem);
         mph = (TextView) findViewById(R.id.userphone);
         mname = (TextView) findViewById(R.id.username);
+        price = (EditText) findViewById(R.id.price);
 
         //__________________________________________
 
-        //
+        workingS = (Switch) findViewById(R.id.workingS);
+        workingS.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener(){
+            @Override
+            public void onCheckedChanged(CompoundButton compoundButton, boolean isChecked) {
+                if (isChecked){
+                    connectService();
+                }else {
+                    disconnectService();
+                }
+            }
+        });
+
+        //__________________________________________
         //for when finish the work
         mWorkStatus =(Button)findViewById(R.id.WorkStatus);
         mWorkStatus.setOnClickListener(new View.OnClickListener(){
@@ -118,12 +141,14 @@ public class ServiceProviderMapsActivity extends FragmentActivity implements OnM
                     case 2:
                         recoredWork();
                         endWork();
+                        payment.setVisibility(View.VISIBLE);
                         break;
                 }
             }
         });
         ////-----------------------------------
 
+        gotIt = (Button)findViewById(R.id.gotIt);
         gotIt.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -131,7 +156,39 @@ public class ServiceProviderMapsActivity extends FragmentActivity implements OnM
             }
         });
 
+
+        //-----------------------------------------
+
+        Submit = (Button)findViewById(R.id.Submit);
+        Submit.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                setprice();
+                payment.setVisibility(View.GONE);
+            }
+        });
+
+        //-----------------------------------------
+
+
         getAssigmeduser();
+    }
+
+    private void setprice() {
+        DatabaseReference historyRideInfoDb = FirebaseDatabase.getInstance().getReference().child("history").child(requestId);
+        mprice = price.getText().toString();
+        Map userInfo = new HashMap();
+        userInfo.put("price", mprice);
+        historyRideInfoDb.updateChildren(userInfo);
+    }
+
+
+    private void connectService(){
+
+        if (ActivityCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+            ActivityCompat.requestPermissions(ServiceProviderMapsActivity.this,new String[]{Manifest.permission.ACCESS_FINE_LOCATION},LOCATION_REQUEST_CODE);
+        }
+        LocationServices.FusedLocationApi.requestLocationUpdates(mGoogleApiClient, mLocationRequest, this);
     }
 
 
@@ -189,7 +246,7 @@ public class ServiceProviderMapsActivity extends FragmentActivity implements OnM
             }});} //contune foe displsy 4
     ///
     private  void endWork(){
-        mWorkStatus.setText("picked user");
+        mWorkStatus.setText("Arrived");
         erasePolylines();
 
         String userid = FirebaseAuth.getInstance().getCurrentUser().getUid();
@@ -217,22 +274,34 @@ public class ServiceProviderMapsActivity extends FragmentActivity implements OnM
     }
 
 
-    private void recoredWork(){
+    String requestId;
+    private void recoredWork() {
 
         String userId = FirebaseAuth.getInstance().getCurrentUser().getUid();
         DatabaseReference serviceRef = FirebaseDatabase.getInstance().getReference().child("Users").child("ServiceProvider").child(userId).child("history");
         DatabaseReference userRef = FirebaseDatabase.getInstance().getReference().child("Users").child("Customer").child(userID).child("history");
         DatabaseReference historyRef = FirebaseDatabase.getInstance().getReference().child("history");
-        String requestId = historyRef.push().getKey();
+        requestId = historyRef.push().getKey();
         serviceRef.child(requestId).setValue(true);
         userRef.child(requestId).setValue(true);
 
         HashMap map = new HashMap();
-        map.put("ServiceProvider",userId);
-        map.put("Customer",userID);
-        map.put("Rating",0);//defult
+        map.put("ServiceProvider", userId);
+        map.put("Customer", userID);
+        map.put("rating", 0);//defult
+        map.put("timestamp", getCurrenTimestamp());
         historyRef.child(requestId).updateChildren(map);
     }
+        private Long getCurrenTimestamp() { //long becuse a number
+            Long timestamp = System.currentTimeMillis()/1000;
+            return timestamp;
+
+        }
+
+
+
+
+
     //
     //here take listener and marker here becuse need delete
     Marker pickupMarker;
@@ -317,6 +386,9 @@ public class ServiceProviderMapsActivity extends FragmentActivity implements OnM
             }
         }
     }
+
+
+
     @Override
     public void onConnected(@Nullable Bundle bundle) {
         mLocationRequest = new LocationRequest();
@@ -341,7 +413,10 @@ public class ServiceProviderMapsActivity extends FragmentActivity implements OnM
         DatabaseReference ref = FirebaseDatabase.getInstance().getReference("servierAvailable");
         GeoFire geoFire = new GeoFire(ref);
         geoFire.removeLocation(userId);
+        mMap.animateCamera(CameraUpdateFactory.zoomTo(10));
     }
+
+
     final int LOCATION_REQUEST_CODE = 1;
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {

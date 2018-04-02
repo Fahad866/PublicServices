@@ -1,0 +1,90 @@
+ <android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:tools="http://schemas.android.com/tools"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="#ffffff"
+        tools:context="com.example.fahad.publicservices.CustomerMenuPage">
+
+        <!-- The primary full-screen view. This can be replaced with whatever view
+             is needed to present your content, e.g. VideoView, SurfaceView,
+             TextureView, etc. -->
+
+        <!-- This FrameLayout insets its children based on system windows using
+             android:fitsSystemWindows. -->
+
+     <LinearLayout
+         android:layout_width="match_parent"
+         android:layout_height="match_parent"
+         android:gravity="center"
+         android:orientation="vertical"
+         android:weightSum="5">
+
+         <Button
+             android:id="@+id/Request_Services"
+             android:layout_width="match_parent"
+             android:layout_height="0sp"
+             android:layout_weight="1"
+             android:layout_margin="20sp"
+             android:background="#21c1de"
+             android:drawableTop="@drawable/request_services"
+             android:paddingTop="10sp"
+             android:text="Request Services"
+             android:textColor="#ffffff"
+             android:textSize="32sp" />
+
+         <Button
+             android:id="@+id/Previous_Request_Customer"
+             android:layout_width="match_parent"
+             android:layout_height="0sp"
+             android:layout_weight="1"
+             android:layout_margin="20sp"
+             android:background="#ffffff"
+             android:drawableTop="@drawable/list"
+             android:paddingTop="10sp"
+             android:text="Previous Request"
+             android:textColor="#83838c"
+             android:textSize="32sp" />
+
+         <Button
+             android:id="@+id/Edit_Profile"
+             android:layout_width="match_parent"
+             android:layout_height="0sp"
+             android:layout_weight="1"
+             android:layout_margin="20sp"
+             android:background="#ffffff"
+             android:drawableTop="@drawable/edit"
+             android:paddingTop="10sp"
+             android:text="Edit Profile"
+             android:textColor="#83838c"
+             android:textSize="32sp" />
+
+         <Button
+             android:id="@+id/Contact_Us"
+             android:layout_width="match_parent"
+             android:layout_height="0sp"
+             android:layout_weight="1"
+             android:layout_margin="20sp"
+             android:background="#ffffff"
+             android:drawableTop="@drawable/support"
+             android:paddingTop="10sp"
+             android:text="Contact Us"
+             android:textColor="#83838c"
+             android:textSize="32sp" />
+
+         <Button
+             android:id="@+id/Log_Out"
+             android:layout_width="match_parent"
+             android:layout_height="0sp"
+             android:layout_weight="1"
+             android:layout_margin="20sp"
+             android:background="#ffffff"
+             android:drawableTop="@drawable/exit"
+             android:paddingTop="10sp"
+             android:text="Log Out"
+             android:textColor="#83838c"
+             android:textSize="32sp" />
+     </LinearLayout>
+
+    </android.support.constraint.ConstraintLayout>
+
+

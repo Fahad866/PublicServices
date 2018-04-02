@@ -23,6 +23,8 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.rengwuxian.materialedittext.MaterialEditText;
 
+import dmax.dialog.SpotsDialog;
+
 //import dmax.dialog.SpotsDialog;
 
 public class CustomerMainActivity extends AppCompatActivity {
@@ -118,23 +120,23 @@ public class CustomerMainActivity extends AppCompatActivity {
                         }
 
                         //wating dialog
-                        //final SpotsDialog waitingDialog = new SpotsDialog(CustomerMainActivity.this);
-                        //waitingDialog.show();
+                        final SpotsDialog waitingDialog = new SpotsDialog(CustomerMainActivity.this);
+                        waitingDialog.show();
 
                         //signin
                         auth.signInWithEmailAndPassword(edtEmail.getText().toString(),edtPassword.getText().toString())
                                 .addOnSuccessListener(new OnSuccessListener<AuthResult>() {
                                     @Override
                                     public void onSuccess(AuthResult authResult) {
-                                        //waitingDialog.dismiss();
-                                        startActivity(new Intent(CustomerMainActivity.this,UserMainPage.class));
+                                        waitingDialog.dismiss();
+                                        startActivity(new Intent(CustomerMainActivity.this,CustomerMenuPage.class));
                                         finish();
                                     }
                                 })
                                 .addOnFailureListener(new OnFailureListener() {
                                     @Override
                                     public void onFailure(@NonNull Exception e) {
-                                        //waitingDialog.dismiss();
+                                        waitingDialog.dismiss();
                                         Snackbar.make(rootLayout, "faild" + e.getMessage(), Snackbar.LENGTH_SHORT).show();
 
                                     }

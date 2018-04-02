@@ -46,6 +46,12 @@ dependencies {
     compile 'com.github.jd-alexander:library:1.1.0'
     compile 'com.github.bumptech.glide:glide:4.0.0'
     compile 'com.google.firebase:firebase-storage:11.8.0'
+    //wating dialoge
+    compile 'com.github.d-max:spots-dialog:0.7@aar'
+    //circle image
+    compile 'de.hdodenhof:circleimageview:2.2.0'
+    //layout round corner
+    compile 'com.jcminarro:RoundKornerLayouts:0.3.1'
 
 
 }

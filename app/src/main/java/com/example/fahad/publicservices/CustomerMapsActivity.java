@@ -25,6 +25,7 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
+import android.widget.RatingBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -51,10 +52,13 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
+import com.jcminarro.roundkornerlayout.RoundKornerLinearLayout;
 
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
+import de.hdodenhof.circleimageview.CircleImageView;
 
 public class CustomerMapsActivity extends FragmentActivity implements OnMapReadyCallback ,
         GoogleApiClient.ConnectionCallbacks ,
@@ -70,15 +74,16 @@ public class CustomerMapsActivity extends FragmentActivity implements OnMapReady
     SupportMapFragment mapFragment;
     private Button mRequest , gotIt;
     private LatLng pickupLocation;
-
+    private RatingBar mratingBar;// rating bar for see rating for provider
     private Boolean requestBol = false;
     private Marker pickupMarker ;
     private RadioGroup mRadioGroup;
     private String distination;
     private String requestService;
 
-    private LinearLayout mDriverInfo , DriverInfoTop;
-    private ImageView mDriverProfileImage;
+    private LinearLayout  DriverInfoTop;
+    private RoundKornerLinearLayout mDriverInfo;
+    private CircleImageView mDriverProfileImage;
     private TextView mDriverName , mDriverPhone , mDriverNameTop , mDriverPhoneTop ;
 
     @Override
@@ -94,17 +99,18 @@ public class CustomerMapsActivity extends FragmentActivity implements OnMapReady
         }else {
             mapFragment.getMapAsync(this);//start map
         }
-        mDriverInfo = (LinearLayout)findViewById(R.id.DriverInfo);
+        mDriverInfo = (RoundKornerLinearLayout)findViewById(R.id.DriverInfo);
         DriverInfoTop = (LinearLayout)findViewById(R.id.DriverInfoTop);
-        mDriverProfileImage = (ImageView) findViewById(R.id.DriverProfileImage);
+        mDriverProfileImage = (CircleImageView) findViewById(R.id.DriverProfileImage);
         mDriverName = (TextView) findViewById(R.id.DriverName);
         mDriverPhone  = (TextView) findViewById(R.id.DriverPhone);
         mDriverNameTop = (TextView) findViewById(R.id.DriverNameTop);
         mDriverPhoneTop  = (TextView) findViewById(R.id.DriverPhoneTop);
+        mratingBar=(RatingBar)findViewById(R.id.ratingBar);
 
         //__________________________________________
         mRadioGroup = (RadioGroup)findViewById(R.id.radioGroup);
-        mRadioGroup.check(R.id.carfix);
+        mRadioGroup.check(R.id.car_fix);
 
         mRequest= (Button)findViewById(R.id.btn_call_worker);
         gotIt = (Button)findViewById(R.id.gotIt);
@@ -296,6 +302,19 @@ public class CustomerMapsActivity extends FragmentActivity implements OnMapReady
                         mDriverPhone.setText(map.get("phone").toString());
                         mDriverPhoneTop.setText(map.get("phone").toString());
                     }
+                    // calculating provider rating use loop
+                    int ratingSum = 0 ;
+                    float ratingsTotal = 0;
+                    float ratingAvg = 0;
+                    for (DataSnapshot child : dataSnapshot.child("rating").getChildren()){
+                        ratingSum = ratingSum+Integer.valueOf(child.getValue().toString());
+                        ratingsTotal++;
+                    }
+                    // avg
+                    if (ratingsTotal != 0){
+                        ratingAvg = ratingSum /ratingsTotal;
+                        mratingBar.setRating(ratingAvg);
+                    }
                 }
             }
             @Override
@@ -349,6 +368,7 @@ public class CustomerMapsActivity extends FragmentActivity implements OnMapReady
         mRequest.setText("you'r cancel call Again");
         //contuunie for display 5
         mDriverInfo.setVisibility(View.GONE);
+        DriverInfoTop.setVisibility(View.GONE);
         mDriverPhone.setText("");
         mDriverName.setText("");
         mDriverProfileImage.setImageResource(R.drawable.profile);

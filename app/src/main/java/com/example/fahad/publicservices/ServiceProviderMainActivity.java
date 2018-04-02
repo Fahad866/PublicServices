@@ -23,6 +23,8 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.rengwuxian.materialedittext.MaterialEditText;
 
+import dmax.dialog.SpotsDialog;
+
 //import dmax.dialog.SpotsDialog;
 
 public class ServiceProviderMainActivity extends AppCompatActivity {
@@ -119,22 +121,22 @@ public class ServiceProviderMainActivity extends AppCompatActivity {
                 }
 
                 //wating dialog
-                //final SpotsDialog waitingDialog = new SpotsDialog(ServiceProviderMainActivity.this);
-                //waitingDialog.show();
+                final SpotsDialog waitingDialog = new SpotsDialog(ServiceProviderMainActivity.this);
+                waitingDialog.show();
 
                 //signin
                 auth.signInWithEmailAndPassword(edtEmail.getText().toString() , edtPassword.getText().toString()).addOnSuccessListener(new OnSuccessListener<AuthResult>() {
                     @Override
                     public void onSuccess(AuthResult authResult) {
-                       // waitingDialog.dismiss();
-                        startActivity(new Intent(ServiceProviderMainActivity.this , ServiceProviderMainPage.class));
+                        waitingDialog.dismiss();
+                        startActivity(new Intent(ServiceProviderMainActivity.this , ServiceProviderMenuPage.class));
                         finish();
                     }
                 })
                         .addOnFailureListener(new OnFailureListener() {
                             @Override
                             public void onFailure(@NonNull Exception e) {
-                                //waitingDialog.dismiss();
+                                waitingDialog.dismiss();
                                 Snackbar.make(rootLayout, "Falid" + e.getMessage(), Snackbar.LENGTH_SHORT).show();
 
                                 //active sign in button
@@ -223,7 +225,6 @@ public class ServiceProviderMainActivity extends AppCompatActivity {
                         FirebaseDatabase.getInstance().getReference().child("Users").child("ServiceProvider").child(FirebaseAuth.getInstance().getCurrentUser().getUid()).setValue(user).addOnSuccessListener(new OnSuccessListener<Void>() {
                             @Override
                             public void onSuccess(Void aVoid) {
-                                Snackbar.make(rootLayout , "Register successfuly" , Snackbar.LENGTH_SHORT).show();
                                 Intent intent = new Intent(ServiceProviderMainActivity.this , SelectService.class);
                                 startActivity(intent);
                             }

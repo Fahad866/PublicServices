@@ -32,13 +32,15 @@ import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 
+import de.hdodenhof.circleimageview.CircleImageView;
+
 public class EditProfile extends AppCompatActivity {
 
-    EditText edtName , edtPassword , edtEmail , edtPhone ;
+    EditText edtName , edtPhone ;
     Button btnSubmit;
-    ImageView image;
+    CircleImageView image;
     private Uri resultUri ;
-    private String  mphone , mpassword , mname , mProfileUrl;
+    private String  mphone , mname , mProfileUrl;
 
     private String accountType ;
     private FirebaseAuth mAthu;
@@ -50,11 +52,10 @@ public class EditProfile extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.edit_profile);
 
-        edtEmail = (EditText)findViewById(R.id.edtEmail);
-        edtPassword = (EditText)findViewById(R.id.edtPassword);
         edtName = (EditText)findViewById(R.id.edtName);
         edtPhone = (EditText)findViewById(R.id.edtPhone);
-        image = (ImageView)findViewById(R.id.image);
+
+        image = (CircleImageView)findViewById(R.id.image);
         btnSubmit = (Button)findViewById(R.id.btnSubmit);
         accountType = getIntent().getStringExtra("accountType");
 
@@ -74,6 +75,7 @@ public class EditProfile extends AppCompatActivity {
             }
         });
 
+        getUserinfo();
         btnSubmit.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -94,11 +96,6 @@ public class EditProfile extends AppCompatActivity {
                     Map<String , Object> map=(Map<String , Object>)dataSnapshot.getValue();
                     //if any an correct plase cheke name db
 
-
-                    if (map.get("password")!=null){
-                        mpassword=map.get("password").toString();
-                        edtPassword.setText(mpassword);
-                    }
                     if (map.get("name")!=null){
                         mname=map.get("name").toString();
                         edtName.setText(mname);
@@ -107,7 +104,8 @@ public class EditProfile extends AppCompatActivity {
                         mphone = map.get("phone").toString();
                         edtPhone.setText(mphone);
                     }
-                    if (map.get("profileImageUrl")!=null) {
+
+                    if (map.get("profileImageUrl")!=null){
                         mProfileUrl = map.get("profileImageUrl").toString();
                         Glide.with(getApplication()).load(mProfileUrl).into(image);
                     }
@@ -123,24 +121,25 @@ public class EditProfile extends AppCompatActivity {
 
     private void saveUserInfo() {
 
-        mpassword=edtPassword.getText().toString();
+
         mname=edtName.getText().toString();
         mphone=edtPhone.getText().toString();
 
         Map userInfo = new HashMap();
         userInfo.put("phone",mphone);
-        userInfo.put("password",mpassword);
         userInfo.put("name",mname);
 
         mUserDatabase.updateChildren(userInfo);
+
         if (resultUri!=null){//save image in db
-            StorageReference filePath = FirebaseStorage.getInstance().getReference().child("Profile_Image").child(userID);//like dbrefrence
+            StorageReference filePath = FirebaseStorage.getInstance().getReference().child("Profile_Image ").child(userID);//like dbrefrence
             Bitmap bitmap=null;
             try {
                 bitmap = MediaStore.Images.Media.getBitmap(getApplication().getContentResolver(),resultUri);
             } catch (IOException e) {
                 e.printStackTrace();
             }
+
             //image compression
             ByteArrayOutputStream boas = new ByteArrayOutputStream();
             bitmap.compress(Bitmap.CompressFormat.JPEG,20,boas);

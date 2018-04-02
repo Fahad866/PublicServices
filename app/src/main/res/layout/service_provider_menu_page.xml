@@ -3,7 +3,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="#ffffff"
-    tools:context="com.example.fahad.publicservices.ServiceProviderMainPage">
+    tools:context="com.example.fahad.publicservices.ServiceProviderMenuPage">
 
     <!-- The primary full-screen view. This can be replaced with whatever view
          is needed to present your content, e.g. VideoView, SurfaceView,
@@ -18,25 +18,51 @@
         android:orientation="vertical"
         android:gravity="center">
 
+        <RatingBar
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/ratingBar"
+            android:layout_gravity="center"
+            android:numStars="5"
+            android:layout_marginBottom="15sp"/>
+
         <Button
             android:id="@+id/Receive_Services"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="Receive Services"
-            android:paddingTop="10sp"
-            android:layout_margin="20sp"
+            android:layout_marginRight="20sp"
+            android:layout_marginLeft="20sp"
+            android:layout_marginBottom="15sp"
+            android:paddingTop="5sp"
             android:textColor="#ffffff"
             android:textSize="32sp"
             android:background="#21c1de"
             android:drawableTop="@drawable/available"/>
 
         <Button
+            android:id="@+id/Previous_Request"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginRight="20sp"
+            android:layout_marginLeft="20sp"
+            android:layout_marginBottom="15sp"
+            android:paddingTop="5sp"
+            android:background="#ffffff"
+            android:drawableTop="@drawable/list"
+            android:text="Previous Request"
+            android:textColor="#83838c"
+            android:textSize="32sp" />
+
+        <Button
             android:id="@+id/Edit_Profile"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="Edit Profile"
-            android:paddingTop="10sp"
-            android:layout_margin="20sp"
+            android:layout_marginRight="20sp"
+            android:layout_marginLeft="20sp"
+            android:layout_marginBottom="15sp"
+            android:paddingTop="5sp"
             android:textColor="#83838c"
             android:textSize="32sp"
             android:background="#ffffff"
@@ -47,8 +73,10 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="Contact Us"
-            android:paddingTop="10sp"
-            android:layout_margin="20sp"
+            android:layout_marginRight="20sp"
+            android:layout_marginLeft="20sp"
+            android:layout_marginBottom="15sp"
+            android:paddingTop="5sp"
             android:textColor="#83838c"
             android:textSize="32sp"
             android:background="#ffffff"
@@ -59,8 +87,10 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="Log Out"
-            android:paddingTop="10sp"
-            android:layout_margin="20sp"
+            android:layout_marginRight="20sp"
+            android:layout_marginLeft="20sp"
+            android:layout_marginBottom="15sp"
+            android:paddingTop="5sp"
             android:textColor="#83838c"
             android:textSize="32sp"
             android:background="#ffffff"

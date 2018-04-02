@@ -45,13 +45,16 @@
         <activity
             android:name=".CustomerMapsActivity"
             android:label="@string/title_activity_user_maps" />
-        <activity android:name=".UserMainPage" />
+        <activity android:name=".CustomerMenuPage" />
         <activity android:name=".EditProfile" />
         <activity android:name=".ContactUs" />
         <activity android:name=".SelectService" />
-        <activity android:name=".ServiceProviderMainPage" />
+        <activity android:name=".ServiceProviderMenuPage" />
         <activity android:name=".ForgetPassword" />
-        <activity android:name=".Customer_Service_details"></activity>
+        <activity android:name=".Customer_Service_details" />
+        <activity android:name=".historyCustomer" />
+        <activity android:name=".HistoryCustomerSingle" />
+        <activity android:name=".historyServiceProvider"></activity>
     </application>
 
 </manifest>

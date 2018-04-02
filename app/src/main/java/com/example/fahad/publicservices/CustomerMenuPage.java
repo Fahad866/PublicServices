@@ -8,16 +8,18 @@ import android.widget.Button;
 
 import com.google.firebase.auth.FirebaseAuth;
 
-public class ServiceProviderMainPage extends AppCompatActivity {
+public class CustomerMenuPage extends AppCompatActivity {
 
-    Button Log_Out, Contact_Us, Edit_Profile, Receive_Services;
+    Button Log_Out, Contact_Us, Edit_Profile, Request_Services , Previous_Request_Customer;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.service_provider_main_page);
+        setContentView(R.layout.customer_menu_page);
 
-        Receive_Services = (Button) findViewById(R.id.Receive_Services);
+        Request_Services = (Button) findViewById(R.id.Request_Services);
+        Previous_Request_Customer = (Button) findViewById(R.id.Previous_Request_Customer);
         Edit_Profile = (Button) findViewById(R.id.Edit_Profile);
         Contact_Us = (Button) findViewById(R.id.Contact_Us);
         Log_Out = (Button) findViewById(R.id.Log_Out);
@@ -25,8 +27,19 @@ public class ServiceProviderMainPage extends AppCompatActivity {
         Edit_Profile.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent = new Intent(ServiceProviderMainPage.this , EditProfile.class);
-                intent.putExtra("accountType" , "ServiceProvider");
+                Intent intent = new Intent(CustomerMenuPage.this , EditProfile.class);
+                intent.putExtra("accountType","Customer");
+                startActivity(intent);
+            }
+        });
+
+        //================================================================================
+
+        Previous_Request_Customer.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(CustomerMenuPage.this , historyCustomer.class);
+                intent.putExtra("userOrServiceprovider","Customer");
                 startActivity(intent);
             }
         });
@@ -36,17 +49,17 @@ public class ServiceProviderMainPage extends AppCompatActivity {
         Contact_Us.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent = new Intent(ServiceProviderMainPage.this , ContactUs.class);
+                Intent intent = new Intent(CustomerMenuPage.this , ContactUs.class);
                 startActivity(intent);
             }
         });
 
         //================================================================================
 
-        Receive_Services.setOnClickListener(new View.OnClickListener() {
+        Request_Services.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent = new Intent(ServiceProviderMainPage.this , ServiceProviderMapsActivity.class);
+                Intent intent = new Intent(CustomerMenuPage.this , Customer_Service_details.class);
                 startActivity(intent);
             }
         });
@@ -57,7 +70,7 @@ public class ServiceProviderMainPage extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 FirebaseAuth.getInstance().signOut();
-                Intent intent = new Intent(ServiceProviderMainPage.this, MainActivity.class);
+                Intent intent = new Intent(CustomerMenuPage.this, MainActivity.class);
                 startActivity(intent);
                 finish();
                 return;
@@ -65,6 +78,6 @@ public class ServiceProviderMainPage extends AppCompatActivity {
         });
 
 
-
     }
 }
+

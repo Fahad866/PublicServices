@@ -1,10 +1,14 @@
 package com.example.fahad.publicservices;
 
 import android.content.Intent;
+import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
+import android.widget.RelativeLayout;
+import android.widget.Toast;
 
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DatabaseReference;
@@ -19,6 +23,7 @@ public class SelectService extends AppCompatActivity {
     private DatabaseReference mServiceDatabase;
     private String serviceId;
     private FirebaseAuth mAthu;
+    private LinearLayout rootLayout;
 
 
     @Override
@@ -31,9 +36,11 @@ public class SelectService extends AppCompatActivity {
         doctor = (ImageView)findViewById(R.id.doctor);
         car_wash = (ImageView)findViewById(R.id.car_wash);
         car_fix = (ImageView)findViewById(R.id.car_fix);
-        mobile_repair = (ImageView)findViewById(R.id.mobile_fix);
+        mobile_repair = (ImageView)findViewById(R.id.mobile_repair);
         plumber = (ImageView)findViewById(R.id.plumber);
         electrician = (ImageView)findViewById(R.id.electrician);
+        rootLayout = (LinearLayout)findViewById(R.id.rootLayout);
+
 
 
         mAthu = FirebaseAuth.getInstance();
@@ -47,6 +54,7 @@ public class SelectService extends AppCompatActivity {
                 Map userInfo = new HashMap();
                 userInfo.put("service","barber");
                 mServiceDatabase.updateChildren(userInfo);
+                Snackbar.make(rootLayout , "Register successfuly" , Snackbar.LENGTH_LONG).show();
                 Intent intent = new Intent(SelectService.this , ServiceProviderMainActivity.class);
                 startActivity(intent);
             }
