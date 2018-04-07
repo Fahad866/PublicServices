@@ -12,7 +12,7 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:id="@+id/DriverInfoTop"
+        android:id="@+id/seviceinfotop"
         android:orientation="horizontal"
         android:background="@color/white"
         android:layout_gravity="top"
@@ -25,7 +25,7 @@
             android:layout_marginLeft="75sp"
             android:textSize="17sp"
             android:textColor="@color/black"
-            android:id="@+id/DriverNameTop"
+            android:id="@+id/servicnametop"
             android:drawableLeft="@drawable/person" />
         <TextView
             android:layout_width="wrap_content"
@@ -34,7 +34,7 @@
             android:layout_marginLeft="40sp"
             android:textSize="17sp"
             android:textColor="@color/black"
-            android:id="@+id/DriverPhoneTop"
+            android:id="@+id/servicphonetop"
             android:drawableLeft="@drawable/phone"
             />
     </LinearLayout>
@@ -51,7 +51,7 @@
         <com.jcminarro.roundkornerlayout.RoundKornerLinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:id="@+id/DriverInfo"
+            android:id="@+id/seviceinfo"
             android:layout_gravity="center"
             android:layout_margin="20sp"
             app:corner_radius="16sp"
@@ -62,7 +62,7 @@
                 android:layout_width="150sp"
                 android:layout_height="150sp"
                 android:layout_gravity="center"
-                android:id="@+id/DriverProfileImage"
+                android:id="@+id/seviceImge"
                 android:src="@drawable/profile"
                 android:padding="10sp"/>
             <TextView
@@ -71,7 +71,7 @@
                 android:layout_gravity="center"
                 android:textSize="30sp"
                 android:textColor="@color/black"
-                android:id="@+id/DriverName"
+                android:id="@+id/seviceName"
                 android:drawableLeft="@drawable/person" />
             <TextView
                 android:layout_width="wrap_content"
@@ -79,7 +79,7 @@
                 android:layout_gravity="center"
                 android:textSize="30sp"
                 android:textColor="@color/black"
-                android:id="@+id/DriverPhone"
+                android:id="@+id/servicphone"
                 android:drawableLeft="@drawable/phone"
                 android:padding="10sp"/>
             <RatingBar
@@ -114,8 +114,15 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:background="@android:color/white"
-                android:orientation="vertical"
-                android:padding="8dp">
+                android:orientation="vertical">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/distant"
+                    android:textColor="@android:color/holo_red_dark"
+                    android:visibility="gone"
+                    android:layout_gravity="center"/>
 
                 <TextView
                     android:layout_width="match_parent"
@@ -187,12 +194,32 @@
                 </HorizontalScrollView>
             </LinearLayout>
 
-            <Button
-                android:id="@+id/btn_call_worker"
+            <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:layout_weight="2">
+            <Button
+                android:id="@+id/request"
+                android:layout_width="0sp"
+                android:layout_height="wrap_content"
+                android:layout_marginRight="2sp"
+                android:layout_weight="1"
                 android:layout_gravity="bottom"
                 android:text="Call Worker" />
+
+            <Button
+                android:id="@+id/btn_cancle"
+                android:layout_width="0sp"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="2sp"
+                android:layout_weight="1"
+                android:layout_gravity="bottom"
+                android:enabled="false"
+                android:text="Cancel"
+                />
+            </LinearLayout>
+
         </LinearLayout>
 
 

@@ -9,6 +9,7 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.LinearLayout;
+import android.widget.Toast;
 
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
@@ -43,8 +44,7 @@ public class ForgetPassword extends AppCompatActivity {
                         @Override
                         public void onComplete(@NonNull Task<Void> task) {
                             if(task.isSuccessful()){
-                                Snackbar.make(ForgetPasswordLayout , "Password Reset Email Sent" , Snackbar.LENGTH_LONG ).show();
-                                finish();
+                                Toast.makeText(ForgetPassword.this , "Password Reset Email Sent" , Toast.LENGTH_LONG).show();
                                 Intent intent = new Intent(ForgetPassword.this , MainActivity.class);
                                 startActivity(intent);
                             }else {

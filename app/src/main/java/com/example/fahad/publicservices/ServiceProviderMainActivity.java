@@ -100,8 +100,7 @@ public class ServiceProviderMainActivity extends AppCompatActivity {
 
                 dialog.dismiss();
 
-                //set disable sign in button if is processing
-                btnSignIn.setEnabled(false);
+
 
 
                 //check validation

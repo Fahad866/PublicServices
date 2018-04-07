@@ -95,61 +95,59 @@ public class CustomerMainActivity extends AppCompatActivity {
 
         //set button
         dialog.setPositiveButton("SIGN IN", new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
 
-                        dialog.dismiss();
+                dialog.dismiss();
 
-                        //set disable sign in button if is processing
-                        btnSignIn.setEnabled(false);
+                //set disable sign in button if is processing
 
-                        //check validation
-                        if (TextUtils.isEmpty(edtEmail.getText().toString())) {
-                            Snackbar.make(rootLayout, "Please enter email address", Snackbar.LENGTH_SHORT).show();
-                            return;
-                        }
 
-                        if (TextUtils.isEmpty(edtPassword.getText().toString())) {
-                            Snackbar.make(rootLayout, "Please enter password", Snackbar.LENGTH_SHORT).show();
-                            return;
-                        }
-
-                        if (edtPassword.getText().toString().length() < 6) {
-                            Snackbar.make(rootLayout, "password too short !!", Snackbar.LENGTH_SHORT).show();
-                            return;
-                        }
-
-                        //wating dialog
-                        final SpotsDialog waitingDialog = new SpotsDialog(CustomerMainActivity.this);
-                        waitingDialog.show();
-
-                        //signin
-                        auth.signInWithEmailAndPassword(edtEmail.getText().toString(),edtPassword.getText().toString())
-                                .addOnSuccessListener(new OnSuccessListener<AuthResult>() {
-                                    @Override
-                                    public void onSuccess(AuthResult authResult) {
-                                        waitingDialog.dismiss();
-                                        startActivity(new Intent(CustomerMainActivity.this,CustomerMenuPage.class));
-                                        finish();
-                                    }
-                                })
-                                .addOnFailureListener(new OnFailureListener() {
-                                    @Override
-                                    public void onFailure(@NonNull Exception e) {
-                                        waitingDialog.dismiss();
-                                        Snackbar.make(rootLayout, "faild" + e.getMessage(), Snackbar.LENGTH_SHORT).show();
-
-                                    }
-                                });
-                    }
-        });
-
-            dialog.setNegativeButton("CANCLE", new DialogInterface.OnClickListener() {
-                @Override
-                public void onClick(DialogInterface dialog, int which) {
-                    dialog.dismiss();
+                //check validation
+                if (TextUtils.isEmpty(edtEmail.getText().toString())) {
+                    Snackbar.make(rootLayout, "Please enter email address", Snackbar.LENGTH_SHORT).show();
+                    return;
                 }
-            });
+
+                if (TextUtils.isEmpty(edtPassword.getText().toString())) {
+                    Snackbar.make(rootLayout, "Please enter password", Snackbar.LENGTH_SHORT).show();
+                    return;
+                }
+
+                if (edtPassword.getText().toString().length() < 6) {
+                    Snackbar.make(rootLayout, "password too short !!", Snackbar.LENGTH_SHORT).show();
+                    return;
+                }
+
+                //wating dialog
+                final SpotsDialog waitingDialog = new SpotsDialog(CustomerMainActivity.this);
+                waitingDialog.show();
+
+                //signin
+                auth.signInWithEmailAndPassword(edtEmail.getText().toString(), edtPassword.getText().toString())
+                        .addOnSuccessListener(new OnSuccessListener<AuthResult>() {
+                            @Override
+                            public void onSuccess(AuthResult authResult) {
+                                waitingDialog.dismiss();
+                                startActivity(new Intent(CustomerMainActivity.this, CustomerMenuPage.class));
+                                finish();
+                            }
+                        })
+                        .addOnFailureListener(new OnFailureListener() {
+                            @Override
+                            public void onFailure(@NonNull Exception e) {
+                                waitingDialog.dismiss();
+                                Snackbar.make(rootLayout, "faild" + e.getMessage(), Snackbar.LENGTH_SHORT).show();
+
+                            }
+                        });
+            }
+        }).setNegativeButton("CANCLE", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                dialog.dismiss();
+            }
+        });
 
         dialog.show();
     }
@@ -221,20 +219,20 @@ public class CustomerMainActivity extends AppCompatActivity {
                                 Snackbar.make(rootLayout , "Register successfuly" , Snackbar.LENGTH_SHORT).show();
                             }
                         })
+                                .addOnFailureListener(new OnFailureListener() {
+                                    @Override
+                                    public void onFailure(@NonNull Exception e) {
+                                        Snackbar.make(rootLayout , "Falid" + e.getMessage() , Snackbar.LENGTH_SHORT).show();
+                                    }
+                                });
+                    }
+                })
                         .addOnFailureListener(new OnFailureListener() {
                             @Override
                             public void onFailure(@NonNull Exception e) {
                                 Snackbar.make(rootLayout , "Falid" + e.getMessage() , Snackbar.LENGTH_SHORT).show();
                             }
                         });
-                    }
-                })
-                .addOnFailureListener(new OnFailureListener() {
-                    @Override
-                    public void onFailure(@NonNull Exception e) {
-                        Snackbar.make(rootLayout , "Falid" + e.getMessage() , Snackbar.LENGTH_SHORT).show();
-                    }
-                });
 
             }
         });

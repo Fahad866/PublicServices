@@ -54,7 +54,7 @@ public class SelectService extends AppCompatActivity {
                 Map userInfo = new HashMap();
                 userInfo.put("service","barber");
                 mServiceDatabase.updateChildren(userInfo);
-                Snackbar.make(rootLayout , "Register successfuly" , Snackbar.LENGTH_LONG).show();
+                Toast.makeText(SelectService.this , "Register successfuly" , Toast.LENGTH_LONG).show();
                 Intent intent = new Intent(SelectService.this , ServiceProviderMainActivity.class);
                 startActivity(intent);
             }
@@ -68,6 +68,7 @@ public class SelectService extends AppCompatActivity {
                 Map userInfo = new HashMap();
                 userInfo.put("service","carpenter");
                 mServiceDatabase.updateChildren(userInfo);
+                Toast.makeText(SelectService.this , "Register successfuly" , Toast.LENGTH_LONG).show();
                 Intent intent = new Intent(SelectService.this , ServiceProviderMainActivity.class);
                 startActivity(intent);
             }
@@ -81,6 +82,7 @@ public class SelectService extends AppCompatActivity {
                 Map userInfo = new HashMap();
                 userInfo.put("service","doctor");
                 mServiceDatabase.updateChildren(userInfo);
+                Toast.makeText(SelectService.this , "Register successfuly" , Toast.LENGTH_LONG).show();
                 Intent intent = new Intent(SelectService.this , ServiceProviderMainActivity.class);
                 startActivity(intent);
             }
@@ -94,6 +96,7 @@ public class SelectService extends AppCompatActivity {
                 Map userInfo = new HashMap();
                 userInfo.put("service","car_wash");
                 mServiceDatabase.updateChildren(userInfo);
+                Toast.makeText(SelectService.this , "Register successfuly" , Toast.LENGTH_LONG).show();
                 Intent intent = new Intent(SelectService.this , ServiceProviderMainActivity.class);
                 startActivity(intent);
             }
@@ -107,6 +110,7 @@ public class SelectService extends AppCompatActivity {
                 Map userInfo = new HashMap();
                 userInfo.put("service","car_fix");
                 mServiceDatabase.updateChildren(userInfo);
+                Toast.makeText(SelectService.this , "Register successfuly" , Toast.LENGTH_LONG).show();
                 Intent intent = new Intent(SelectService.this , ServiceProviderMainActivity.class);
                 startActivity(intent);
             }
@@ -120,6 +124,7 @@ public class SelectService extends AppCompatActivity {
                 Map userInfo = new HashMap();
                 userInfo.put("service","mobile_repair");
                 mServiceDatabase.updateChildren(userInfo);
+                Toast.makeText(SelectService.this , "Register successfuly" , Toast.LENGTH_LONG).show();
                 Intent intent = new Intent(SelectService.this , ServiceProviderMainActivity.class);
                 startActivity(intent);
             }
@@ -133,6 +138,7 @@ public class SelectService extends AppCompatActivity {
                 Map userInfo = new HashMap();
                 userInfo.put("service","plumber");
                 mServiceDatabase.updateChildren(userInfo);
+                Toast.makeText(SelectService.this , "Register successfuly" , Toast.LENGTH_LONG).show();
                 Intent intent = new Intent(SelectService.this , ServiceProviderMainActivity.class);
                 startActivity(intent);
             }
@@ -146,6 +152,7 @@ public class SelectService extends AppCompatActivity {
                 Map userInfo = new HashMap();
                 userInfo.put("service","electrician");
                 mServiceDatabase.updateChildren(userInfo);
+                Toast.makeText(SelectService.this , "Register successfuly" , Toast.LENGTH_LONG).show();
                 Intent intent = new Intent(SelectService.this , ServiceProviderMainActivity.class);
                 startActivity(intent);
             }

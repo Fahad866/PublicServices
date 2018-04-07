@@ -8,6 +8,9 @@ import android.view.ViewGroup;
 import com.example.fahad.publicservices.R;
 import java.util.List;
 
+/**
+ * Created by fahad on 03/04/2018 AD.
+ */
 
 public class serviceHadapter  extends RecyclerView.Adapter<serviceHviewholders>{
     private List<HisoryObjectS> itemList;

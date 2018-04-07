@@ -22,8 +22,8 @@ import java.util.Map;
 public class historyServiceProviderSingle extends AppCompatActivity{
     private String rideId , currentuserId ,userID , serviceId,usersUserOrProvider;
     private TextView date;
-    private TextView userphone;
-    private TextView username;
+    private TextView CustomerPhone;
+    private TextView CustomerName;
     private DatabaseReference historyRideInfoDb ;
     private TextView msprice;
 
@@ -34,14 +34,15 @@ public class historyServiceProviderSingle extends AppCompatActivity{
 
         msprice = (TextView) findViewById(R.id.ppp);
         date = (TextView) findViewById(R.id.date);
-        userphone = (TextView) findViewById(R.id.servicephone);
-        username = (TextView) findViewById(R.id.servicename);
+        CustomerPhone = (TextView) findViewById(R.id.servicephone);
+        CustomerName = (TextView) findViewById(R.id.servicename);
 
 
         currentuserId = FirebaseAuth.getInstance().getCurrentUser().getUid();
         rideId = getIntent().getExtras().getString("rideId");
         historyRideInfoDb = FirebaseDatabase.getInstance().getReference().child("history").child(rideId);
         getRideInfo();
+        getUserInf();
     }
 
     private void getRideInfo() {
@@ -50,20 +51,18 @@ public class historyServiceProviderSingle extends AppCompatActivity{
             public void onDataChange(DataSnapshot dataSnapshot) {
                 if (dataSnapshot.exists()){
                     for (DataSnapshot child : dataSnapshot.getChildren()){
-
                         if (child.getKey().equals("Customer")){
-                            serviceId = child.getValue().toString();
-                            if (!serviceId.equals(currentuserId)){
+                            userID = child.getValue().toString();
+                            if (!userID.equals(currentuserId)){
                                 usersUserOrProvider = "ServiceProvider";
-                                getUserInfo("Customer",serviceId);
-
+                                getUserInfo("Customer",userID);
                             }
                         }
                         if (child.getKey().equals("ServiceProvider")){
-                            userID = child.getValue().toString();
-                            if (!userID.equals(currentuserId)){
+                            serviceId = child.getValue().toString();
+                            if (!serviceId.equals(currentuserId)){
                                 usersUserOrProvider = "Customer";
-                                getUserInfo("ServiceProvider",userID);
+                                getUserInfo("ServiceProvider",serviceId);
                             }
                         }
 
@@ -71,6 +70,8 @@ public class historyServiceProviderSingle extends AppCompatActivity{
                             date.setText(getDate(Long.valueOf(child.getValue().toString())));
 
                         }
+
+
 
                     }
                 }
@@ -93,21 +94,25 @@ public class historyServiceProviderSingle extends AppCompatActivity{
     }
 
 
+
     private void getUserInfo(String otheruserUseOrService, String otherUserId) {
         DatabaseReference mOtherUsersDb = FirebaseDatabase.getInstance().getReference().child("Users").child(otheruserUseOrService).child(otherUserId);
         mOtherUsersDb.addListenerForSingleValueEvent(new ValueEventListener(){
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
                 if (dataSnapshot.exists()){
-                    Map<String,Object> map = (Map<String,Object>)dataSnapshot.getValue();
+                    Map<String,Object>map = (Map<String,Object>)dataSnapshot.getValue();
                     if (map.get("name")!=null){
-                        username.setText(map.get("name").toString());
+                        CustomerName.setText(map.get("name").toString());
                     }
                     if (map.get("phone")!=null){
-                        userphone.setText(map.get("phone").toString());
+                        CustomerPhone.setText(map.get("phone").toString());
                     }
 
+
                 }
+
+
             }
 
             @Override
@@ -116,15 +121,13 @@ public class historyServiceProviderSingle extends AppCompatActivity{
             }
         });
     }
-
-
-    private void getUserInf() {
+    private void getUserInf(){
         historyRideInfoDb.addListenerForSingleValueEvent(new ValueEventListener(){
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
-                if (dataSnapshot.exists()) {
-                    Map<String, Object> map = (Map<String, Object>) dataSnapshot.getValue();
-                    if (map.get("price") != null) {
+                if (dataSnapshot.exists()){
+                    Map<String,Object>map = (Map<String,Object>)dataSnapshot.getValue();
+                    if (map.get("price")!=null){
                         msprice.setText(map.get("price").toString());
                     }
 

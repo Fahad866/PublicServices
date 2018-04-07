@@ -24,19 +24,19 @@
             android:id="@+id/ratingBar"
             android:layout_gravity="center"
             android:numStars="5"
-            android:layout_marginBottom="15sp"/>
+            android:layout_marginBottom="7sp"/>
 
         <Button
             android:id="@+id/Receive_Services"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="Receive Services"
-            android:layout_marginRight="20sp"
-            android:layout_marginLeft="20sp"
+            android:layout_marginRight="10sp"
+            android:layout_marginLeft="10sp"
             android:layout_marginBottom="15sp"
             android:paddingTop="5sp"
             android:textColor="#ffffff"
-            android:textSize="32sp"
+            android:textSize="26sp"
             android:background="#21c1de"
             android:drawableTop="@drawable/available"/>
 
@@ -44,27 +44,27 @@
             android:id="@+id/Previous_Request"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginRight="20sp"
-            android:layout_marginLeft="20sp"
+            android:layout_marginRight="10sp"
+            android:layout_marginLeft="10sp"
             android:layout_marginBottom="15sp"
             android:paddingTop="5sp"
             android:background="#ffffff"
             android:drawableTop="@drawable/list"
             android:text="Previous Request"
             android:textColor="#83838c"
-            android:textSize="32sp" />
+            android:textSize="25sp" />
 
         <Button
             android:id="@+id/Edit_Profile"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="Edit Profile"
-            android:layout_marginRight="20sp"
-            android:layout_marginLeft="20sp"
+            android:layout_marginRight="10sp"
+            android:layout_marginLeft="10sp"
             android:layout_marginBottom="15sp"
             android:paddingTop="5sp"
             android:textColor="#83838c"
-            android:textSize="32sp"
+            android:textSize="26sp"
             android:background="#ffffff"
             android:drawableTop="@drawable/edit"/>
 
@@ -73,12 +73,12 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="Contact Us"
-            android:layout_marginRight="20sp"
-            android:layout_marginLeft="20sp"
+            android:layout_marginRight="10sp"
+            android:layout_marginLeft="10sp"
             android:layout_marginBottom="15sp"
             android:paddingTop="5sp"
             android:textColor="#83838c"
-            android:textSize="32sp"
+            android:textSize="26sp"
             android:background="#ffffff"
             android:drawableTop="@drawable/support"/>
 
@@ -87,12 +87,12 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="Log Out"
-            android:layout_marginRight="20sp"
-            android:layout_marginLeft="20sp"
+            android:layout_marginRight="10sp"
+            android:layout_marginLeft="10sp"
             android:layout_marginBottom="15sp"
             android:paddingTop="5sp"
             android:textColor="#83838c"
-            android:textSize="32sp"
+            android:textSize="26sp"
             android:background="#ffffff"
             android:drawableTop="@drawable/exit"/>
     </LinearLayout>

@@ -9,6 +9,9 @@ import com.example.fahad.publicservices.R;
 import com.example.fahad.publicservices.historyServiceProviderSingle;
 
 
+/**
+ * Created by fahad on 03/04/2018 AD.
+ */
 
 public class serviceHviewholders extends RecyclerView.ViewHolder implements View.OnClickListener{
 

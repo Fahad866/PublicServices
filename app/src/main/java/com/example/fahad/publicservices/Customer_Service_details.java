@@ -57,6 +57,14 @@ public class Customer_Service_details extends AppCompatActivity {
         userID= mAthu.getCurrentUser().getUid();
         mUserDatabase= FirebaseDatabase.getInstance().getReference().child("Users").child("Customer").child(userID);
 
+        if(mUserDatabase.child("Text") != null){
+            mUserDatabase.child("Text").setValue("No Description");
+        }
+
+        if(mUserDatabase.child("problemImage") != null){
+            mUserDatabase.child("problemImage").setValue("https://firebasestorage.googleapis.com/v0/b/publicservices-f6743.appspot.com/o/no_image.png?alt=media&token=1f18abbd-eb33-45d6-9d8e-ca1f522b42f8");
+        }
+
         mImageProblem.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -76,14 +84,19 @@ public class Customer_Service_details extends AppCompatActivity {
             }
         });
 
+
+
     }
 
 
     //save to db
     private void saveUserInfo() {
+
         textprblem=mTexeProblem.getText().toString();
         Map userInfo = new HashMap();
+        if(textprblem != "")
         userInfo.put("Text",textprblem);
+
         mUserDatabase.updateChildren(userInfo);
         if (resultUri!=null){//save image in db
             StorageReference filePath = FirebaseStorage.getInstance().getReference().child("Image Problem").child(userID);//like dbrefrence

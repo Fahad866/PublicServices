@@ -15,6 +15,7 @@ import com.directions.route.RoutingListener;
 import com.google.android.gms.location.LocationListener;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.design.widget.Snackbar;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.FragmentActivity;
 import android.os.Bundle;
@@ -164,7 +165,7 @@ public class ServiceProviderMapsActivity extends FragmentActivity implements OnM
             @Override
             public void onClick(View v) {
                 setprice();
-                payment.setVisibility(View.GONE);
+
             }
         });
 
@@ -179,6 +180,12 @@ public class ServiceProviderMapsActivity extends FragmentActivity implements OnM
         mprice = price.getText().toString();
         Map userInfo = new HashMap();
         userInfo.put("price", mprice);
+
+        if(mprice.toString().equals("0")){
+            Toast.makeText(ServiceProviderMapsActivity.this , "Please add price" , Toast.LENGTH_SHORT).show();
+        }else{
+            payment.setVisibility(View.GONE);
+        }
         historyRideInfoDb.updateChildren(userInfo);
     }
 
@@ -269,7 +276,8 @@ public class ServiceProviderMapsActivity extends FragmentActivity implements OnM
         userinfo.setVisibility(View.GONE);
         userproblem.setVisibility(View.GONE);
         muserText.setText("");
-        mUserproblemImage.setImageResource(R.drawable.carfix);
+
+
         //end
     }
 
@@ -367,7 +375,8 @@ public class ServiceProviderMapsActivity extends FragmentActivity implements OnM
             mLastLocation = location;
             LatLng latLng = new LatLng(location.getLatitude(), location.getLongitude());
             mMap.moveCamera(CameraUpdateFactory.newLatLng(latLng));
-            mMap.animateCamera(CameraUpdateFactory.zoomTo(17));
+            //mMap.animateCamera(CameraUpdateFactory.zoomTo(15));
+            mMap.getUiSettings().setZoomControlsEnabled(true);
             String userId = FirebaseAuth.getInstance().getCurrentUser().getUid();
             DatabaseReference refAvailable = FirebaseDatabase.getInstance().getReference("servierAvailable");
             DatabaseReference refWorking = FirebaseDatabase.getInstance().getReference("serviceWorking");
@@ -446,11 +455,6 @@ public class ServiceProviderMapsActivity extends FragmentActivity implements OnM
 
     @Override
     public void onRoutingFailure(RouteException e) {
-        if (e != null){
-            Toast.makeText(this,"Error "+e.getMessage(),Toast.LENGTH_LONG).show();
-        }else {
-            Toast.makeText(this,"Something want wrong  ",Toast.LENGTH_LONG).show();
-        }
     }
     @Override
     public void onRoutingStart() {
@@ -488,5 +492,16 @@ public class ServiceProviderMapsActivity extends FragmentActivity implements OnM
             line.remove();
         }
         polylines.clear();
+    }
+
+    @Override
+    public void onBackPressed() {
+        if(userID != ""){
+            Toast.makeText(ServiceProviderMapsActivity.this , "wait until the order is finished" , Toast.LENGTH_SHORT).show();
+        }else if(mprice.toString().equals("0")){
+            Toast.makeText(ServiceProviderMapsActivity.this , "Please add price" , Toast.LENGTH_SHORT).show();
+        }else{
+            super.onBackPressed();
+        }
     }
 }

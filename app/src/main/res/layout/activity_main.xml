@@ -47,9 +47,7 @@
             android:layout_height="wrap_content"
             android:layout_marginRight="6dp"
             android:layout_weight="1"
-
             android:background="@drawable/btn_sign_in_backgraund"
-
             android:text="USER"
             android:textColor="@android:color/white" />
 
@@ -59,10 +57,9 @@
             android:layout_height="wrap_content"
             android:layout_marginLeft="6dp"
             android:layout_weight="1"
-
             android:background="@drawable/btn_register_backgroung"
-
             android:text="SERVICE PROVIDER"
+            android:textSize="12sp"
             android:textColor="@color/btnRegister" />
 
 
