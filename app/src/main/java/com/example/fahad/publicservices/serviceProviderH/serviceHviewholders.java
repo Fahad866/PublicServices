@@ -9,28 +9,25 @@ import com.example.fahad.publicservices.R;
 import com.example.fahad.publicservices.historyServiceProviderSingle;
 
 
-/**
- * Created by fahad on 03/04/2018 AD.
- */
 
 public class serviceHviewholders extends RecyclerView.ViewHolder implements View.OnClickListener{
 
-    public TextView rideId;
+    public TextView RequestId;
     public TextView time;
     public serviceHviewholders(View itemView) {
         super(itemView);
         itemView.setOnClickListener(this);
 
-        rideId = (TextView) itemView.findViewById(R.id.rideId);
+        RequestId = (TextView) itemView.findViewById(R.id.RequestId);
         time = (TextView) itemView.findViewById(R.id.time);
     }
     @Override
     public void onClick(View view) {
         //passing value between activities
         Intent i = new Intent(view.getContext(), historyServiceProviderSingle.class);
-        //pass  the info for ride  bundle allow pass multi between ac
+        //pass  the info for Request  bundle allow pass multi between ac
         Bundle b = new Bundle();
-        b.putString("rideId",rideId.getText().toString());
+        b.putString("RequestId",RequestId.getText().toString());
         i.putExtras(b);
         view.getContext().startActivity(i);
     }

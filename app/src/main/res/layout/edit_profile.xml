@@ -22,6 +22,7 @@
             android:src="@drawable/add_image"
             android:layout_gravity="center"
             android:layout_marginTop="40sp"
+            android:visibility="visible"
             />
 
     </LinearLayout>

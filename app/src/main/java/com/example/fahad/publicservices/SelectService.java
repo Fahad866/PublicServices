@@ -20,8 +20,8 @@ import java.util.Map;
 public class SelectService extends AppCompatActivity {
 
     ImageView barber , carpenter , doctor , car_wash , car_fix , mobile_repair , plumber , electrician;
-    private DatabaseReference mServiceDatabase;
-    private String serviceId;
+    private DatabaseReference ServiceProviderDatabase;
+    private String serviceProviderId;
     private FirebaseAuth mAthu;
     private LinearLayout rootLayout;
 
@@ -44,17 +44,17 @@ public class SelectService extends AppCompatActivity {
 
 
         mAthu = FirebaseAuth.getInstance();
-        serviceId = mAthu.getCurrentUser().getUid();
-        mServiceDatabase = FirebaseDatabase.getInstance().getReference().child("Users").child("ServiceProvider").child(serviceId);
+        serviceProviderId = mAthu.getCurrentUser().getUid();
+        ServiceProviderDatabase = FirebaseDatabase.getInstance().getReference().child("Users").child("ServiceProvider").child(serviceProviderId);
 
 
         barber.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Map userInfo = new HashMap();
-                userInfo.put("service","barber");
-                mServiceDatabase.updateChildren(userInfo);
-                Toast.makeText(SelectService.this , "Register successfuly" , Toast.LENGTH_LONG).show();
+                Map CustomerInfo = new HashMap();
+                CustomerInfo.put("service","barber");
+                ServiceProviderDatabase.updateChildren(CustomerInfo);
+                Toast.makeText(SelectService.this , "Register successfully" , Toast.LENGTH_LONG).show();
                 Intent intent = new Intent(SelectService.this , ServiceProviderMainActivity.class);
                 startActivity(intent);
             }
@@ -65,10 +65,10 @@ public class SelectService extends AppCompatActivity {
         carpenter.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Map userInfo = new HashMap();
-                userInfo.put("service","carpenter");
-                mServiceDatabase.updateChildren(userInfo);
-                Toast.makeText(SelectService.this , "Register successfuly" , Toast.LENGTH_LONG).show();
+                Map CustomerInfo = new HashMap();
+                CustomerInfo.put("service","carpenter");
+                ServiceProviderDatabase.updateChildren(CustomerInfo);
+                Toast.makeText(SelectService.this , "Register successfully" , Toast.LENGTH_LONG).show();
                 Intent intent = new Intent(SelectService.this , ServiceProviderMainActivity.class);
                 startActivity(intent);
             }
@@ -79,10 +79,10 @@ public class SelectService extends AppCompatActivity {
         doctor.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Map userInfo = new HashMap();
-                userInfo.put("service","doctor");
-                mServiceDatabase.updateChildren(userInfo);
-                Toast.makeText(SelectService.this , "Register successfuly" , Toast.LENGTH_LONG).show();
+                Map CustomerInfo = new HashMap();
+                CustomerInfo.put("service","doctor");
+                ServiceProviderDatabase.updateChildren(CustomerInfo);
+                Toast.makeText(SelectService.this , "Register successfully" , Toast.LENGTH_LONG).show();
                 Intent intent = new Intent(SelectService.this , ServiceProviderMainActivity.class);
                 startActivity(intent);
             }
@@ -93,10 +93,10 @@ public class SelectService extends AppCompatActivity {
         car_wash.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Map userInfo = new HashMap();
-                userInfo.put("service","car_wash");
-                mServiceDatabase.updateChildren(userInfo);
-                Toast.makeText(SelectService.this , "Register successfuly" , Toast.LENGTH_LONG).show();
+                Map CustomerInfo = new HashMap();
+                CustomerInfo.put("service","car_wash");
+                ServiceProviderDatabase.updateChildren(CustomerInfo);
+                Toast.makeText(SelectService.this , "Register successfully" , Toast.LENGTH_LONG).show();
                 Intent intent = new Intent(SelectService.this , ServiceProviderMainActivity.class);
                 startActivity(intent);
             }
@@ -107,10 +107,10 @@ public class SelectService extends AppCompatActivity {
         car_fix.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Map userInfo = new HashMap();
-                userInfo.put("service","car_fix");
-                mServiceDatabase.updateChildren(userInfo);
-                Toast.makeText(SelectService.this , "Register successfuly" , Toast.LENGTH_LONG).show();
+                Map CustomerInfo = new HashMap();
+                CustomerInfo.put("service","car_fix");
+                ServiceProviderDatabase.updateChildren(CustomerInfo);
+                Toast.makeText(SelectService.this , "Register successfully" , Toast.LENGTH_LONG).show();
                 Intent intent = new Intent(SelectService.this , ServiceProviderMainActivity.class);
                 startActivity(intent);
             }
@@ -121,10 +121,10 @@ public class SelectService extends AppCompatActivity {
         mobile_repair.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Map userInfo = new HashMap();
-                userInfo.put("service","mobile_repair");
-                mServiceDatabase.updateChildren(userInfo);
-                Toast.makeText(SelectService.this , "Register successfuly" , Toast.LENGTH_LONG).show();
+                Map CustomerInfo = new HashMap();
+                CustomerInfo.put("service","mobile_repair");
+                ServiceProviderDatabase.updateChildren(CustomerInfo);
+                Toast.makeText(SelectService.this , "Register successfully" , Toast.LENGTH_LONG).show();
                 Intent intent = new Intent(SelectService.this , ServiceProviderMainActivity.class);
                 startActivity(intent);
             }
@@ -135,10 +135,10 @@ public class SelectService extends AppCompatActivity {
         plumber.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Map userInfo = new HashMap();
-                userInfo.put("service","plumber");
-                mServiceDatabase.updateChildren(userInfo);
-                Toast.makeText(SelectService.this , "Register successfuly" , Toast.LENGTH_LONG).show();
+                Map CustomerInfo = new HashMap();
+                CustomerInfo.put("service","plumber");
+                ServiceProviderDatabase.updateChildren(CustomerInfo);
+                Toast.makeText(SelectService.this , "Register successfully" , Toast.LENGTH_LONG).show();
                 Intent intent = new Intent(SelectService.this , ServiceProviderMainActivity.class);
                 startActivity(intent);
             }
@@ -149,10 +149,10 @@ public class SelectService extends AppCompatActivity {
         electrician.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Map userInfo = new HashMap();
-                userInfo.put("service","electrician");
-                mServiceDatabase.updateChildren(userInfo);
-                Toast.makeText(SelectService.this , "Register successfuly" , Toast.LENGTH_LONG).show();
+                Map CustomerInfo = new HashMap();
+                CustomerInfo.put("service","electrician");
+                ServiceProviderDatabase.updateChildren(CustomerInfo);
+                Toast.makeText(SelectService.this , "Register successfully" , Toast.LENGTH_LONG).show();
                 Intent intent = new Intent(SelectService.this , ServiceProviderMainActivity.class);
                 startActivity(intent);
             }

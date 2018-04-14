@@ -35,12 +35,12 @@ public class ForgetPassword extends AppCompatActivity {
         resetPassword.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                String userEmail = email.getText().toString().trim();
+                String CustomerEmail = email.getText().toString().trim();
 
-                if(userEmail.equals("")){
+                if(CustomerEmail.equals("")){
                     Snackbar.make(ForgetPasswordLayout , "Please Enter Email " , Snackbar.LENGTH_LONG ).show();
                 }else {
-                    firebaseAuth.sendPasswordResetEmail(userEmail).addOnCompleteListener(new OnCompleteListener<Void>() {
+                    firebaseAuth.sendPasswordResetEmail(CustomerEmail).addOnCompleteListener(new OnCompleteListener<Void>() {
                         @Override
                         public void onComplete(@NonNull Task<Void> task) {
                             if(task.isSuccessful()){

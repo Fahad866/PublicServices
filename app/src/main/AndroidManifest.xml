@@ -18,7 +18,8 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".MainActivity"
+        <activity
+            android:name=".MainActivity"
             android:screenOrientation="portrait">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -26,10 +27,12 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".CustomerMainActivity"
-            android:screenOrientation="portrait"/>
-        <activity android:name=".ServiceProviderMainActivity"
-            android:screenOrientation="portrait"/>
+        <activity
+            android:name=".CustomerMainActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".ServiceProviderMainActivity"
+            android:screenOrientation="portrait" />
 
         <!--
              The API key for Google Maps-based APIs is defined as a string resource.
@@ -46,45 +49,46 @@
         <activity
             android:name=".ServiceProviderMapsActivity"
             android:label="@string/title_activity_maps"
-            android:screenOrientation="portrait"/>
+            android:screenOrientation="portrait" />
         <activity
             android:name=".CustomerMapsActivity"
             android:label="@string/title_activity_user_maps"
-            android:screenOrientation="portrait"/>
-
-        <activity android:name=".CustomerMenuPage"
-            android:screenOrientation="portrait"/>
-
-        <activity android:name=".EditProfile"
-            android:screenOrientation="portrait"/>
-
-        <activity android:name=".ContactUs"
-            android:screenOrientation="portrait"/>
-
-        <activity android:name=".SelectService"
-            android:screenOrientation="portrait"/>
-
-        <activity android:name=".ServiceProviderMenuPage"
-            android:screenOrientation="portrait"/>
-
-        <activity android:name=".ForgetPassword"
-            android:screenOrientation="portrait"/>
-
-        <activity android:name=".Customer_Service_details"
-            android:screenOrientation="portrait"/>
-
-        <activity android:name=".historyCustomer"
-            android:screenOrientation="portrait"/>
-
-        <activity android:name=".HistoryCustomerSingle"
-            android:screenOrientation="portrait"/>
-
-        <activity android:name=".historyServiceProvider"
-            android:screenOrientation="portrait"/>
-
-        <activity android:name="historyServiceProviderSingle"
-            android:screenOrientation="portrait"/>
-
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".CustomerMenuPage"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".EditProfile"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".ContactUs"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".SelectService"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".ServiceProviderMenuPage"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".ForgetPassword"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".Customer_Service_details"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".historyCustomer"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".HistoryCustomerSingle"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".historyServiceProvider"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".historyServiceProviderSingle"
+            android:screenOrientation="portrait" />
+        <activity android:name=".AdminPage" />
+        <activity android:name=".AdminServicesDetails" />
     </application>
 
 </manifest>

@@ -64,31 +64,26 @@ public class ServiceProviderMapsActivity extends FragmentActivity implements OnM
         GoogleApiClient.ConnectionCallbacks ,
         GoogleApiClient.OnConnectionFailedListener ,
         LocationListener ,
-        RoutingListener
-{
+        RoutingListener {
 
     private GoogleMap mMap;
     GoogleApiClient mGoogleApiClient;
     Location mLastLocation;
-    private LatLng destinationLatLang;
-    private Switch workingS ;
+    private Switch WorkingSwitch ;
     LocationRequest mLocationRequest;
-    private int status = 0 ;
     private Button mWorkStatus , gotIt , Submit;
-    private String userID="";//customerID
+    private String CustomerID="";
     private Boolean isLoggingOut = false;
     SupportMapFragment mapFragment;
-    FrameLayout service_provider_map;
 
-    //_____________________________
-    //this for desplay the information user //can send photo and text 1
-    private LinearLayout userinfo ;
-    private RoundKornerLinearLayout userproblem , payment;
-    private ImageView mUserproblemImage;// can send image for problem
-    private TextView muserText ,mph,mname , mUserDestination ;//can send text
-    private String mprice;
-    private EditText price;
-    // ____________________________
+    private LinearLayout CustomerInfo ;
+    private RoundKornerLinearLayout CustomerProblem , payment;
+    private ImageView CustomerProblemImage;
+    private TextView CustomerTextProblem , CustomerPhone , CustomerName;
+    private String Price;
+    private EditText edtPrice;
+
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -100,60 +95,50 @@ public class ServiceProviderMapsActivity extends FragmentActivity implements OnM
         if (ActivityCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
             ActivityCompat.requestPermissions(ServiceProviderMapsActivity.this,new String[]{android.Manifest.permission.ACCESS_FINE_LOCATION},LOCATION_REQUEST_CODE);
         }else {
-            mapFragment.getMapAsync(this);//start map
+            mapFragment.getMapAsync(this); //start map
         }
-        //contune foe displsy 2
 
 
-        userinfo = (LinearLayout)findViewById(R.id.userinfo);
-        userproblem = (RoundKornerLinearLayout)findViewById(R.id.userproblem);
+
+        CustomerInfo = (LinearLayout)findViewById(R.id.userinfo);
+        CustomerProblem = (RoundKornerLinearLayout)findViewById(R.id.userproblem);
         payment = (RoundKornerLinearLayout)findViewById(R.id.payment);
-        mUserproblemImage = (ImageView) findViewById(R.id.userimageProblem);
-        muserText = (TextView) findViewById(R.id.userTextProblem);
-        mph = (TextView) findViewById(R.id.userphone);
-        mname = (TextView) findViewById(R.id.username);
-        price = (EditText) findViewById(R.id.price);
+        CustomerProblemImage = (ImageView) findViewById(R.id.userimageProblem);
+        CustomerTextProblem = (TextView) findViewById(R.id.userTextProblem);
+        CustomerPhone = (TextView) findViewById(R.id.userphone);
+        CustomerName = (TextView) findViewById(R.id.username);
+        edtPrice = (EditText) findViewById(R.id.price);
 
-        //__________________________________________
-
-        workingS = (Switch) findViewById(R.id.workingS);
-        workingS.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener(){
+        WorkingSwitch = (Switch) findViewById(R.id.workingS);
+        WorkingSwitch.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener(){
             @Override
             public void onCheckedChanged(CompoundButton compoundButton, boolean isChecked) {
                 if (isChecked){
-                    connectService();
+                    connectServiceProvider();
                 }else {
-                    disconnectService();
+                    disconnectServiceProvider();
                 }
             }
         });
 
-        //__________________________________________
-        //for when finish the work
+
         mWorkStatus =(Button)findViewById(R.id.WorkStatus);
         mWorkStatus.setOnClickListener(new View.OnClickListener(){
             @Override
             public void onClick(View view) {
-                switch (status){
-                    case 1:
-                        status=2;
-                        mWorkStatus.setText("Completed");
-                        break;
-                    case 2:
-                        recoredWork();
-                        endWork();
-                        payment.setVisibility(View.VISIBLE);
-                        break;
-                }
+                recordedWork();
+                endWork();
+                payment.setVisibility(View.VISIBLE);
             }
         });
+
         ////-----------------------------------
 
         gotIt = (Button)findViewById(R.id.gotIt);
         gotIt.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                userproblem.setVisibility(View.GONE);
+                CustomerProblem.setVisibility(View.GONE);
             }
         });
 
@@ -164,7 +149,7 @@ public class ServiceProviderMapsActivity extends FragmentActivity implements OnM
         Submit.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                setprice();
+                setPrice();
 
             }
         });
@@ -172,25 +157,25 @@ public class ServiceProviderMapsActivity extends FragmentActivity implements OnM
         //-----------------------------------------
 
 
-        getAssigmeduser();
+        getAssignedCustomer();
     }
 
-    private void setprice() {
+    private void setPrice() {
         DatabaseReference historyRideInfoDb = FirebaseDatabase.getInstance().getReference().child("history").child(requestId);
-        mprice = price.getText().toString();
-        Map userInfo = new HashMap();
-        userInfo.put("price", mprice);
+        Price = edtPrice.getText().toString();
+        Map CustomerInfo = new HashMap();
+        CustomerInfo.put("price", Price);
 
-        if(mprice.toString().equals("0")){
+        if(Price.toString().equals("0")){
             Toast.makeText(ServiceProviderMapsActivity.this , "Please add price" , Toast.LENGTH_SHORT).show();
         }else{
             payment.setVisibility(View.GONE);
         }
-        historyRideInfoDb.updateChildren(userInfo);
+        historyRideInfoDb.updateChildren(CustomerInfo);
     }
 
 
-    private void connectService(){
+    private void connectServiceProvider(){
 
         if (ActivityCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
             ActivityCompat.requestPermissions(ServiceProviderMapsActivity.this,new String[]{Manifest.permission.ACCESS_FINE_LOCATION},LOCATION_REQUEST_CODE);
@@ -200,18 +185,17 @@ public class ServiceProviderMapsActivity extends FragmentActivity implements OnM
 
 
     //checking for change inside db
-    private void getAssigmeduser(){
-        String serviceId  = FirebaseAuth.getInstance().getCurrentUser().getUid();
-        DatabaseReference assignedCustomerRef = FirebaseDatabase.getInstance().getReference().child("Users").child("ServiceProvider").child(serviceId).child("CustomerRequest").child("userRideID");
+    private void getAssignedCustomer(){
+        String ServiceProviderId  = FirebaseAuth.getInstance().getCurrentUser().getUid();
+        DatabaseReference assignedCustomerRef = FirebaseDatabase.getInstance().getReference().child("Users").child("ServiceProvider").child(ServiceProviderId).child("CustomerRequest").child("CustomerRequestID");
         assignedCustomerRef.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
                 if(dataSnapshot.exists()){
-                    status = 1;
-                    userID = dataSnapshot.getValue().toString();
-                    getAssigmedUserPickupLocation();
-                    //contune foe displsy 3
-                    getAssigmedUserInfo();
+                    CustomerID = dataSnapshot.getValue().toString();
+                    getAssignedCustomerLocation();
+
+                    getAssignedCustomerInfo();
 
 
                 }else{
@@ -222,81 +206,78 @@ public class ServiceProviderMapsActivity extends FragmentActivity implements OnM
             }});}
 
 
-    //contune foe displsy 4
-    private void getAssigmedUserInfo(){
-        userinfo.setVisibility(View.VISIBLE);
-        userproblem.setVisibility(View.VISIBLE);
-        DatabaseReference mUserDatabase  = FirebaseDatabase.getInstance().getReference().child("Users").child("Customer").child(userID);
-        mUserDatabase.addListenerForSingleValueEvent(new ValueEventListener() {
+
+    private void getAssignedCustomerInfo(){
+        CustomerInfo.setVisibility(View.VISIBLE);
+        CustomerProblem.setVisibility(View.VISIBLE);
+        DatabaseReference CustomerDatabase  = FirebaseDatabase.getInstance().getReference().child("Users").child("Customer").child(CustomerID);
+        CustomerDatabase.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
                 if (dataSnapshot.exists() && dataSnapshot.getChildrenCount()>0){
                     //if alredy name same in db
                     Map<String , Object> map=(Map<String , Object>)dataSnapshot.getValue();
                     //if any an correct plase cheke name db
-                    if (map.get("Text")!=null){
-                        muserText.setText(map.get("Text").toString());
+                    if (map.get("TextProblem")!=null){
+                        CustomerTextProblem.setText(map.get("TextProblem").toString());
                     }
-                    if (map.get("problemImage")!=null) {
-                        Glide.with(getApplication()).load(map.get("problemImage").toString()).into(mUserproblemImage);
+                    if (map.get("ProblemImage")!=null) {
+                        Glide.with(getApplication()).load(map.get("ProblemImage").toString()).into(CustomerProblemImage);
                     }
                     if (map.get("name")!=null){
-                        mname.setText(map.get("name").toString());
+                        CustomerName.setText(map.get("name").toString());
                     }
                     if (map.get("phone")!=null) {
-                        mph.setText(map.get("phone").toString());
+                        CustomerPhone.setText(map.get("phone").toString());
                     }
                 }
             }
             @Override
             public void onCancelled(DatabaseError databaseError) {
-            }});} //contune foe displsy 4
+            }});}
     ///
     private  void endWork(){
-        mWorkStatus.setText("Arrived");
         erasePolylines();
 
-        String userid = FirebaseAuth.getInstance().getCurrentUser().getUid();
-        DatabaseReference driverRef = FirebaseDatabase.getInstance().getReference().child("Users").child("ServiceProvider").child(userid).child("CustomerRequest");
-        driverRef.removeValue();
+        String CustomerId = FirebaseAuth.getInstance().getCurrentUser().getUid();
+        DatabaseReference ServiceProviderRef = FirebaseDatabase.getInstance().getReference().child("Users").child("ServiceProvider").child(CustomerId).child("CustomerRequest");
+        ServiceProviderRef.removeValue();
 
 
         DatabaseReference ref = FirebaseDatabase.getInstance().getReference("CustomerRequest");
         GeoFire geoFire = new GeoFire(ref);
-        geoFire.removeLocation(userID);
-        userID = "";//userID == coustomerid
+        geoFire.removeLocation(CustomerID);
+        CustomerID = "";
 
-        if(pickupMarker != null){
-            pickupMarker.remove();
+        if(CustomerLocationMarker != null){
+            CustomerLocationMarker.remove();
         }
-        if (servicePickupLocationRefListener != null){
-            servicePickupLocationRef.removeEventListener(servicePickupLocationRefListener);
+        if (CustomerLocationRefListener != null){
+            CustomerLocationRef.removeEventListener(CustomerLocationRefListener);
         }
-        //contuunie for display 5
-        userinfo.setVisibility(View.GONE);
-        userproblem.setVisibility(View.GONE);
-        muserText.setText("");
+
+        CustomerInfo.setVisibility(View.GONE);
+        CustomerProblem.setVisibility(View.GONE);
 
 
-        //end
     }
 
 
     String requestId;
-    private void recoredWork() {
+    private void recordedWork() {
 
-        String userId = FirebaseAuth.getInstance().getCurrentUser().getUid();
-        DatabaseReference serviceRef = FirebaseDatabase.getInstance().getReference().child("Users").child("ServiceProvider").child(userId).child("history");
-        DatabaseReference userRef = FirebaseDatabase.getInstance().getReference().child("Users").child("Customer").child(userID).child("history");
+        String CustomerId = FirebaseAuth.getInstance().getCurrentUser().getUid();
+        DatabaseReference ServiceProviderRef = FirebaseDatabase.getInstance().getReference().child("Users").child("ServiceProvider").child(CustomerId).child("history");
+        DatabaseReference CustomerRef = FirebaseDatabase.getInstance().getReference().child("Users").child("Customer").child(CustomerID).child("history");
         DatabaseReference historyRef = FirebaseDatabase.getInstance().getReference().child("history");
         requestId = historyRef.push().getKey();
-        serviceRef.child(requestId).setValue(true);
-        userRef.child(requestId).setValue(true);
+        ServiceProviderRef.child(requestId).setValue(true);
+        CustomerRef.child(requestId).setValue(true);
 
         HashMap map = new HashMap();
-        map.put("ServiceProvider", userId);
-        map.put("Customer", userID);
-        map.put("rating", 0);//defult
+        map.put("ServiceProvider", CustomerId);
+        map.put("Customer", CustomerID);
+        map.put("rating", 0); //defult
         map.put("timestamp", getCurrenTimestamp());
         historyRef.child(requestId).updateChildren(map);
     }
@@ -312,16 +293,16 @@ public class ServiceProviderMapsActivity extends FragmentActivity implements OnM
 
     //
     //here take listener and marker here becuse need delete
-    Marker pickupMarker;
-    private DatabaseReference servicePickupLocationRef;
-    private ValueEventListener servicePickupLocationRefListener;
-    private void getAssigmedUserPickupLocation(){
+    Marker CustomerLocationMarker;
+    private DatabaseReference CustomerLocationRef;
+    private ValueEventListener CustomerLocationRefListener;
+    private void getAssignedCustomerLocation(){
 
-        servicePickupLocationRef = FirebaseDatabase.getInstance().getReference().child("CustomerRequest").child(userID).child("l");//USERID = CUSTOMERID
-        servicePickupLocationRefListener = servicePickupLocationRef.addValueEventListener(new ValueEventListener() {
+        CustomerLocationRef = FirebaseDatabase.getInstance().getReference().child("CustomerRequest").child(CustomerID).child("l");
+        CustomerLocationRefListener = CustomerLocationRef.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
-                if (dataSnapshot.exists() && !userID.equals("")){
+                if (dataSnapshot.exists() && !CustomerID.equals("")){
                     List<Object> map=(List<Object>)dataSnapshot.getValue();
                     double LocationLat=0;
                     double LocationLng=0;
@@ -331,10 +312,10 @@ public class ServiceProviderMapsActivity extends FragmentActivity implements OnM
                     if (map.get(1)!= null){
                         LocationLng = Double.parseDouble(map.get(1).toString());
                     }
-                    LatLng pickupLatLng = new LatLng(LocationLat,LocationLng);
-                    pickupMarker = mMap.addMarker(new MarkerOptions().position(pickupLatLng).title("Pickup location").icon(BitmapDescriptorFactory.fromResource(R.drawable.pin)));
+                    LatLng CustomerLocationLatLng = new LatLng(LocationLat,LocationLng);
+                    CustomerLocationMarker = mMap.addMarker(new MarkerOptions().position(CustomerLocationLatLng).title("Customer Location").icon(BitmapDescriptorFactory.fromResource(R.drawable.pin)));
 
-                    getRouteToMarker(pickupLatLng);
+                    getRouteToMarker(CustomerLocationLatLng);
                 }
             }
             @Override
@@ -342,12 +323,12 @@ public class ServiceProviderMapsActivity extends FragmentActivity implements OnM
             }
         });
     }
-    private void getRouteToMarker(LatLng pickupLatLng) {
+    private void getRouteToMarker(LatLng CustomerLocationLatLng) {
         Routing routing = new Routing.Builder()
                 .travelMode(AbstractRouting.TravelMode.DRIVING)
                 .withListener(this)
                 .alternativeRoutes(false)
-                .waypoints(new LatLng(mLastLocation.getLatitude(),mLastLocation.getLongitude()),pickupLatLng)
+                .waypoints(new LatLng(mLastLocation.getLatitude(),mLastLocation.getLongitude()),CustomerLocationLatLng)
                 .build();
         routing.execute();
     }
@@ -375,22 +356,21 @@ public class ServiceProviderMapsActivity extends FragmentActivity implements OnM
             mLastLocation = location;
             LatLng latLng = new LatLng(location.getLatitude(), location.getLongitude());
             mMap.moveCamera(CameraUpdateFactory.newLatLng(latLng));
-            //mMap.animateCamera(CameraUpdateFactory.zoomTo(15));
             mMap.getUiSettings().setZoomControlsEnabled(true);
-            String userId = FirebaseAuth.getInstance().getCurrentUser().getUid();
-            DatabaseReference refAvailable = FirebaseDatabase.getInstance().getReference("servierAvailable");
-            DatabaseReference refWorking = FirebaseDatabase.getInstance().getReference("serviceWorking");
+            String CustomerId = FirebaseAuth.getInstance().getCurrentUser().getUid();
+            DatabaseReference refAvailable = FirebaseDatabase.getInstance().getReference("ServicesProvidersAvailable");
+            DatabaseReference refWorking = FirebaseDatabase.getInstance().getReference("ServicesProvidersWorking");
             GeoFire geoFireAvailable = new GeoFire(refAvailable);
             GeoFire geoFireWorking = new GeoFire(refWorking);
 
-            switch (userID){ // Customerid = userID
+            switch (CustomerID){
                 case "" :
-                    geoFireWorking.removeLocation(userId);
-                    geoFireAvailable.setLocation(userId, new GeoLocation(location.getLatitude(), location.getLongitude()));
+                    geoFireWorking.removeLocation(CustomerId);
+                    geoFireAvailable.setLocation(CustomerId, new GeoLocation(location.getLatitude(), location.getLongitude()));
                     break;
                 default:
-                    geoFireAvailable.removeLocation(userId);
-                    geoFireWorking.setLocation(userId, new GeoLocation(location.getLatitude(), location.getLongitude()));
+                    geoFireAvailable.removeLocation(CustomerId);
+                    geoFireWorking.setLocation(CustomerId, new GeoLocation(location.getLatitude(), location.getLongitude()));
                     break;
             }
         }
@@ -416,12 +396,13 @@ public class ServiceProviderMapsActivity extends FragmentActivity implements OnM
     @Override
     public void onConnectionFailed(@NonNull ConnectionResult connectionResult) {
     }
-    private void disconnectService(){
+    private void disconnectServiceProvider(){
+        WorkingSwitch.setChecked(false);
         LocationServices.FusedLocationApi.removeLocationUpdates(mGoogleApiClient, this);
-        String userId = FirebaseAuth.getInstance().getCurrentUser().getUid();
-        DatabaseReference ref = FirebaseDatabase.getInstance().getReference("servierAvailable");
+        String CustomerId = FirebaseAuth.getInstance().getCurrentUser().getUid();
+        DatabaseReference ref = FirebaseDatabase.getInstance().getReference("ServicesProvidersAvailable");
         GeoFire geoFire = new GeoFire(ref);
-        geoFire.removeLocation(userId);
+        geoFire.removeLocation(CustomerId);
         mMap.animateCamera(CameraUpdateFactory.zoomTo(10));
     }
 
@@ -436,7 +417,7 @@ public class ServiceProviderMapsActivity extends FragmentActivity implements OnM
                     mapFragment.getMapAsync(this);//start map
 
                 }else {
-                    Toast.makeText(getApplicationContext(),"Please provide the premission",Toast.LENGTH_LONG).show();
+                    Toast.makeText(getApplicationContext(),"Please provide the permission",Toast.LENGTH_LONG).show();
                 }
                 break;
             }
@@ -446,7 +427,7 @@ public class ServiceProviderMapsActivity extends FragmentActivity implements OnM
     protected void onStop() {
         super.onStop();
         if(!isLoggingOut){
-            disconnectService();
+            disconnectServiceProvider();
         }
     }
     //// for line between user and service
@@ -496,9 +477,9 @@ public class ServiceProviderMapsActivity extends FragmentActivity implements OnM
 
     @Override
     public void onBackPressed() {
-        if(userID != ""){
+        if(CustomerID != ""){
             Toast.makeText(ServiceProviderMapsActivity.this , "wait until the order is finished" , Toast.LENGTH_SHORT).show();
-        }else if(mprice.toString().equals("0")){
+        }else if(Price.toString().equals("0")){
             Toast.makeText(ServiceProviderMapsActivity.this , "Please add price" , Toast.LENGTH_SHORT).show();
         }else{
             super.onBackPressed();

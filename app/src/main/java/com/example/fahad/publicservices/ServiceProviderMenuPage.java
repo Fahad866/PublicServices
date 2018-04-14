@@ -18,22 +18,22 @@ import java.util.Map;
 
 public class ServiceProviderMenuPage extends AppCompatActivity {
 
-    Button Log_Out, Contact_Us, Edit_Profile, Receive_Services , Previous_Request;
-    private RatingBar mratingBar;
+    Button Log_Out, Contact_Us, Edit_Profile, Receive_Requests , Previous_Requests;
+    private RatingBar RatingBar;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.service_provider_menu_page);
 
-        getservicerate();
+        getServiceProviderRate();
 
-        Receive_Services = (Button) findViewById(R.id.Receive_Services);
-        Previous_Request = (Button) findViewById(R.id.Previous_Request);
+        Receive_Requests = (Button) findViewById(R.id.Receive_Requests);
+        Previous_Requests = (Button) findViewById(R.id.Previous_Request);
         Edit_Profile = (Button) findViewById(R.id.Edit_Profile);
         Contact_Us = (Button) findViewById(R.id.Contact_Us);
         Log_Out = (Button) findViewById(R.id.Log_Out);
-        mratingBar = (RatingBar) findViewById(R.id.ratingBar);
+        RatingBar = (RatingBar) findViewById(R.id.ratingBar);
 
 
         Edit_Profile.setOnClickListener(new View.OnClickListener() {
@@ -47,11 +47,11 @@ public class ServiceProviderMenuPage extends AppCompatActivity {
 
         //================================================================================
 
-        Previous_Request.setOnClickListener(new View.OnClickListener() {
+        Previous_Requests.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 Intent intent = new Intent(ServiceProviderMenuPage.this, historyServiceProvider.class);
-                intent.putExtra("userServiceprovider", "ServiceProvider");
+                intent.putExtra("CustomerOrServiceProvider", "ServiceProvider");
                 startActivity(intent);
             }
         });
@@ -69,7 +69,7 @@ public class ServiceProviderMenuPage extends AppCompatActivity {
 
         //================================================================================
 
-        Receive_Services.setOnClickListener(new View.OnClickListener() {
+        Receive_Requests.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 Intent intent = new Intent(ServiceProviderMenuPage.this, ServiceProviderMapsActivity.class);
@@ -92,10 +92,10 @@ public class ServiceProviderMenuPage extends AppCompatActivity {
 
     }
 
-    private void getservicerate(){
-        String serviceFoundID = FirebaseAuth.getInstance().getCurrentUser().getUid();
-        DatabaseReference mUserDatabase  = FirebaseDatabase.getInstance().getReference().child("Users").child("ServiceProvider").child(serviceFoundID);
-        mUserDatabase.addListenerForSingleValueEvent(new ValueEventListener() {
+    private void getServiceProviderRate(){
+        String ServiceProviderFoundID = FirebaseAuth.getInstance().getCurrentUser().getUid();
+        DatabaseReference CustomerDatabase  = FirebaseDatabase.getInstance().getReference().child("Users").child("ServiceProvider").child(ServiceProviderFoundID);
+        CustomerDatabase.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
                 if (dataSnapshot.exists() && dataSnapshot.getChildrenCount()>0){
@@ -111,13 +111,13 @@ public class ServiceProviderMenuPage extends AppCompatActivity {
                     // avg
                     if (ratingsTotal != 0){
                         ratingAvg = ratingSum /ratingsTotal;
-                        mratingBar.setRating(ratingAvg);
+                        RatingBar.setRating(ratingAvg);
                     }
                 }
             }
             @Override
             public void onCancelled(DatabaseError databaseError) {
-            }});} //contune foe displsy 4
+            }});}
 
     }
 

@@ -20,49 +20,49 @@ import java.util.Locale;
 import java.util.Map;
 
 public class historyServiceProviderSingle extends AppCompatActivity{
-    private String rideId , currentuserId ,userID , serviceId,usersUserOrProvider;
+    private String RequestId , CurrentCustomerId ,CustomerID , ServiceProviderId,CustomerOrServiceProvider;
     private TextView date;
     private TextView CustomerPhone;
     private TextView CustomerName;
-    private DatabaseReference historyRideInfoDb ;
-    private TextView msprice;
+    private DatabaseReference historyRequestInfoDb ;
+    private TextView Price;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.history_service_provider_single);
 
-        msprice = (TextView) findViewById(R.id.ppp);
+        Price = (TextView) findViewById(R.id.ppp);
         date = (TextView) findViewById(R.id.date);
         CustomerPhone = (TextView) findViewById(R.id.servicephone);
         CustomerName = (TextView) findViewById(R.id.servicename);
 
 
-        currentuserId = FirebaseAuth.getInstance().getCurrentUser().getUid();
-        rideId = getIntent().getExtras().getString("rideId");
-        historyRideInfoDb = FirebaseDatabase.getInstance().getReference().child("history").child(rideId);
-        getRideInfo();
-        getUserInf();
+        CurrentCustomerId = FirebaseAuth.getInstance().getCurrentUser().getUid();
+        RequestId = getIntent().getExtras().getString("RequestId");
+        historyRequestInfoDb = FirebaseDatabase.getInstance().getReference().child("history").child(RequestId);
+        getRequestInfo();
+        getCustomerInfo();
     }
 
-    private void getRideInfo() {
-        historyRideInfoDb.addListenerForSingleValueEvent(new ValueEventListener(){
+    private void getRequestInfo() {
+        historyRequestInfoDb.addListenerForSingleValueEvent(new ValueEventListener(){
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
                 if (dataSnapshot.exists()){
                     for (DataSnapshot child : dataSnapshot.getChildren()){
                         if (child.getKey().equals("Customer")){
-                            userID = child.getValue().toString();
-                            if (!userID.equals(currentuserId)){
-                                usersUserOrProvider = "ServiceProvider";
-                                getUserInfo("Customer",userID);
+                            CustomerID = child.getValue().toString();
+                            if (!CustomerID.equals(CurrentCustomerId)){
+                                CustomerOrServiceProvider = "ServiceProvider";
+                                getCustomerInf("Customer",CustomerID);
                             }
                         }
                         if (child.getKey().equals("ServiceProvider")){
-                            serviceId = child.getValue().toString();
-                            if (!serviceId.equals(currentuserId)){
-                                usersUserOrProvider = "Customer";
-                                getUserInfo("ServiceProvider",serviceId);
+                            ServiceProviderId = child.getValue().toString();
+                            if (!ServiceProviderId.equals(CurrentCustomerId)){
+                                CustomerOrServiceProvider = "Customer";
+                                getCustomerInf("ServiceProvider",ServiceProviderId);
                             }
                         }
 
@@ -95,9 +95,9 @@ public class historyServiceProviderSingle extends AppCompatActivity{
 
 
 
-    private void getUserInfo(String otheruserUseOrService, String otherUserId) {
-        DatabaseReference mOtherUsersDb = FirebaseDatabase.getInstance().getReference().child("Users").child(otheruserUseOrService).child(otherUserId);
-        mOtherUsersDb.addListenerForSingleValueEvent(new ValueEventListener(){
+    private void getCustomerInf(String CustomerOrServiceProvider, String otherCustomerId) {
+        DatabaseReference CustomerDb = FirebaseDatabase.getInstance().getReference().child("Users").child(CustomerOrServiceProvider).child(otherCustomerId);
+        CustomerDb.addListenerForSingleValueEvent(new ValueEventListener(){
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
                 if (dataSnapshot.exists()){
@@ -121,14 +121,14 @@ public class historyServiceProviderSingle extends AppCompatActivity{
             }
         });
     }
-    private void getUserInf(){
-        historyRideInfoDb.addListenerForSingleValueEvent(new ValueEventListener(){
+    private void getCustomerInfo(){
+        historyRequestInfoDb.addListenerForSingleValueEvent(new ValueEventListener(){
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
                 if (dataSnapshot.exists()){
                     Map<String,Object>map = (Map<String,Object>)dataSnapshot.getValue();
                     if (map.get("price")!=null){
-                        msprice.setText(map.get("price").toString());
+                        Price.setText(map.get("price").toString());
                     }
 
                 }

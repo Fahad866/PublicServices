@@ -127,16 +127,24 @@ public class ServiceProviderMainActivity extends AppCompatActivity {
                 auth.signInWithEmailAndPassword(edtEmail.getText().toString() , edtPassword.getText().toString()).addOnSuccessListener(new OnSuccessListener<AuthResult>() {
                     @Override
                     public void onSuccess(AuthResult authResult) {
-                        waitingDialog.dismiss();
-                        startActivity(new Intent(ServiceProviderMainActivity.this , ServiceProviderMenuPage.class));
-                        finish();
+
+                        if(edtEmail.getText().toString().equals("admin@admin.com") && edtPassword.getText().toString().equals("admin123")) {
+                            waitingDialog.dismiss();
+                            Intent intent = new Intent(ServiceProviderMainActivity.this, AdminPage.class);
+                            startActivity(intent);
+                        }else{
+                            waitingDialog.dismiss();
+                            startActivity(new Intent(ServiceProviderMainActivity.this , ServiceProviderMenuPage.class));
+                            finish();
+                        }
+
                     }
                 })
                         .addOnFailureListener(new OnFailureListener() {
                             @Override
                             public void onFailure(@NonNull Exception e) {
                                 waitingDialog.dismiss();
-                                Snackbar.make(rootLayout, "Falid" + e.getMessage(), Snackbar.LENGTH_SHORT).show();
+                                Snackbar.make(rootLayout, "Failed" + e.getMessage(), Snackbar.LENGTH_SHORT).show();
 
                                 //active sign in button
                                 btnSignIn.setEnabled(true);
@@ -146,7 +154,7 @@ public class ServiceProviderMainActivity extends AppCompatActivity {
             }
         });
 
-        dialog.setNegativeButton("CANCLE", new DialogInterface.OnClickListener() {
+        dialog.setNegativeButton("CANCEL", new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
                 dialog.dismiss();
@@ -231,7 +239,7 @@ public class ServiceProviderMainActivity extends AppCompatActivity {
                                 .addOnFailureListener(new OnFailureListener() {
                                     @Override
                                     public void onFailure(@NonNull Exception e) {
-                                        Snackbar.make(rootLayout , "Falid" + e.getMessage() , Snackbar.LENGTH_SHORT).show();
+                                        Snackbar.make(rootLayout , "Failed" + e.getMessage() , Snackbar.LENGTH_SHORT).show();
                                     }
                                 });
                     }
@@ -239,7 +247,7 @@ public class ServiceProviderMainActivity extends AppCompatActivity {
                         .addOnFailureListener(new OnFailureListener() {
                             @Override
                             public void onFailure(@NonNull Exception e) {
-                                Snackbar.make(rootLayout , "Falid" + e.getMessage() , Snackbar.LENGTH_SHORT).show();
+                                Snackbar.make(rootLayout , "Failed" + e.getMessage() , Snackbar.LENGTH_SHORT).show();
                             }
                         });
 
@@ -247,7 +255,7 @@ public class ServiceProviderMainActivity extends AppCompatActivity {
         });
 
 
-        dialog.setNegativeButton("CANCLE", new DialogInterface.OnClickListener() {
+        dialog.setNegativeButton("CANCEL", new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
                 dialog.dismiss();

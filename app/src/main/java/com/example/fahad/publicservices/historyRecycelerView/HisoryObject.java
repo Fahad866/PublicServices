@@ -1,19 +1,19 @@
 package com.example.fahad.publicservices.historyRecycelerView;
 public class HisoryObject{
-    private String rideId;
+    private String RequestId;
     private String time;
 
 
 
-    public HisoryObject(String rideId, String time){
-        this.rideId = rideId;
+    public HisoryObject(String RequestId, String time){
+        this.RequestId = RequestId;
         this.time=time;
     }
-    public String getRideId(){
-        return rideId;
+    public String getRequestId(){
+        return RequestId;
     }
-    public void setRideId(String rideId) {
-        this.rideId = rideId;
+    public void setRequestId(String RequestId) {
+        this.RequestId = RequestId;
     }
 
     public String getTime(){

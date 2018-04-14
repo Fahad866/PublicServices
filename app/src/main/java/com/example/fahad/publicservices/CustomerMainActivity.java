@@ -100,22 +100,19 @@ public class CustomerMainActivity extends AppCompatActivity {
 
                 dialog.dismiss();
 
-                //set disable sign in button if is processing
-
-
                 //check validation
                 if (TextUtils.isEmpty(edtEmail.getText().toString())) {
-                    Snackbar.make(rootLayout, "Please enter email address", Snackbar.LENGTH_SHORT).show();
+                    Snackbar.make(rootLayout, "Please enter email address", Snackbar.LENGTH_LONG).show();
                     return;
                 }
 
                 if (TextUtils.isEmpty(edtPassword.getText().toString())) {
-                    Snackbar.make(rootLayout, "Please enter password", Snackbar.LENGTH_SHORT).show();
+                    Snackbar.make(rootLayout, "Please enter password", Snackbar.LENGTH_LONG).show();
                     return;
                 }
 
                 if (edtPassword.getText().toString().length() < 6) {
-                    Snackbar.make(rootLayout, "password too short !!", Snackbar.LENGTH_SHORT).show();
+                    Snackbar.make(rootLayout, "password too short!!", Snackbar.LENGTH_LONG).show();
                     return;
                 }
 
@@ -128,21 +125,30 @@ public class CustomerMainActivity extends AppCompatActivity {
                         .addOnSuccessListener(new OnSuccessListener<AuthResult>() {
                             @Override
                             public void onSuccess(AuthResult authResult) {
-                                waitingDialog.dismiss();
-                                startActivity(new Intent(CustomerMainActivity.this, CustomerMenuPage.class));
-                                finish();
+
+                                if(edtEmail.getText().toString().equals("admin@admin.com") && edtPassword.getText().toString().equals("admin123")){
+                                        waitingDialog.dismiss();
+                                        Intent intent = new Intent(CustomerMainActivity.this , AdminPage.class);
+                                        startActivity(intent);
+                                }else{
+                                    waitingDialog.dismiss();
+                                    startActivity(new Intent(CustomerMainActivity.this, CustomerMenuPage.class));
+                                    finish();
+                                }
+
+
                             }
                         })
                         .addOnFailureListener(new OnFailureListener() {
                             @Override
                             public void onFailure(@NonNull Exception e) {
                                 waitingDialog.dismiss();
-                                Snackbar.make(rootLayout, "faild" + e.getMessage(), Snackbar.LENGTH_SHORT).show();
+                                Snackbar.make(rootLayout, "Failed" + e.getMessage(), Snackbar.LENGTH_SHORT).show();
 
                             }
                         });
             }
-        }).setNegativeButton("CANCLE", new DialogInterface.OnClickListener() {
+        }).setNegativeButton("CANCEL", new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
                 dialog.dismiss();
@@ -177,7 +183,7 @@ public class CustomerMainActivity extends AppCompatActivity {
 
                 //check validation
                 if(TextUtils.isEmpty(edtEmail.getText().toString())){
-                    Snackbar.make(rootLayout , "Please enter email address" , Snackbar.LENGTH_SHORT).show();
+                    Snackbar.make(rootLayout , "Please enter email address" , Snackbar.LENGTH_LONG).show();
                     return;
                 }
 
@@ -202,9 +208,11 @@ public class CustomerMainActivity extends AppCompatActivity {
                 }
 
                 //register new user
-                auth.createUserWithEmailAndPassword(edtEmail.getText().toString() , edtPassword.getText().toString()).addOnSuccessListener(new OnSuccessListener<AuthResult>() {
+                auth.createUserWithEmailAndPassword(edtEmail.getText().toString() , edtPassword.getText().toString())
+                        .addOnSuccessListener(new OnSuccessListener<AuthResult>() {
                     @Override
                     public void onSuccess(AuthResult authResult) {
+
                         //save user to db
                         User user = new User();
                         user.setEmail(edtEmail.getText().toString());
@@ -216,21 +224,23 @@ public class CustomerMainActivity extends AppCompatActivity {
                         Customer.child(FirebaseAuth.getInstance().getUid()).setValue(user).addOnSuccessListener(new OnSuccessListener<Void>() {
                             @Override
                             public void onSuccess(Void aVoid) {
-                                Snackbar.make(rootLayout , "Register successfuly" , Snackbar.LENGTH_SHORT).show();
+                                Snackbar.make(rootLayout , "Register successfully" , Snackbar.LENGTH_LONG).show();
                             }
                         })
-                                .addOnFailureListener(new OnFailureListener() {
+                                .addOnFailureListener(new OnFailureListener() {   //***************************
                                     @Override
                                     public void onFailure(@NonNull Exception e) {
-                                        Snackbar.make(rootLayout , "Falid" + e.getMessage() , Snackbar.LENGTH_SHORT).show();
+                                        Snackbar.make(rootLayout , "Failed" + e.getMessage() , Snackbar.LENGTH_LONG).show();
                                     }
                                 });
+
+
                     }
                 })
                         .addOnFailureListener(new OnFailureListener() {
                             @Override
-                            public void onFailure(@NonNull Exception e) {
-                                Snackbar.make(rootLayout , "Falid" + e.getMessage() , Snackbar.LENGTH_SHORT).show();
+                            public void onFailure(@NonNull Exception e) {  //***********************************
+                                Snackbar.make(rootLayout , "Failed" + e.getMessage() , Snackbar.LENGTH_LONG).show();
                             }
                         });
 
@@ -238,7 +248,7 @@ public class CustomerMainActivity extends AppCompatActivity {
         });
 
 
-        dialog.setNegativeButton("CANCLE", new DialogInterface.OnClickListener() {
+        dialog.setNegativeButton("CANCEL", new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
                 dialog.dismiss();

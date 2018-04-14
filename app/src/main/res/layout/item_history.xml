@@ -14,10 +14,12 @@
         android:text="time"
         android:textSize="12dp" />
     <TextView
-        android:id="@+id/rideId"
+        android:id="@+id/RequestId"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="center"
-        android:text="rideid"
+        android:text="RequestId"
         android:textSize="12dp" />
+
+
 </LinearLayout>

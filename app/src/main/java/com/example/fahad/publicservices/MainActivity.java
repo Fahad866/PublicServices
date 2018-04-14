@@ -8,7 +8,7 @@ import android.widget.Button;
 
 public class MainActivity extends AppCompatActivity {
 
-    Button btnUser , btnServiceProvider;
+    Button btnCustomer , btnServiceProvider;
 
 
     @Override
@@ -16,10 +16,10 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        btnUser = (Button)findViewById(R.id.btnUser);
+        btnCustomer = (Button)findViewById(R.id.btnUser);
         btnServiceProvider = (Button)findViewById(R.id.btnServiceProvider);
 
-        btnUser.setOnClickListener(new View.OnClickListener() {
+        btnCustomer.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 startActivity(new Intent(MainActivity.this , CustomerMainActivity.class));

@@ -21,11 +21,11 @@ import java.util.Locale;
 
 public class historyCustomer extends AppCompatActivity {
 
-    private String userOrServiceprovider  , userId;
+    private String CustomerOrServiceProvider , CustomerId;
 
     private RecyclerView mhistoryRecycelerView;
-    private  RecyclerView.Adapter mhistoryAdapter ;
-    private  RecyclerView.LayoutManager mhistoryLayoutManager;
+    private RecyclerView.Adapter mhistoryAdapter ;
+    private RecyclerView.LayoutManager mhistoryLayoutManager;
 
 
     @Override
@@ -40,20 +40,20 @@ public class historyCustomer extends AppCompatActivity {
         mhistoryAdapter = new HistoryAdapter(getDataHistory(), historyCustomer.this);//pass the context and itemList
         mhistoryRecycelerView.setAdapter(mhistoryAdapter);
 
-        userOrServiceprovider = getIntent().getExtras().getString("userOrServiceprovider");//this when recive from user menu
-        userId = FirebaseAuth.getInstance().getCurrentUser().getUid();
-        getUserHistoryids();
+        CustomerOrServiceProvider = getIntent().getExtras().getString("CustomerOrServiceProvider");//this when recive from user menu
+        CustomerId = FirebaseAuth.getInstance().getCurrentUser().getUid();
+        getCustomerHistoryIds();
 
     }
 
-    private void getUserHistoryids() {
-        DatabaseReference userHistoryDatabase = FirebaseDatabase.getInstance().getReference().child("Users").child(userOrServiceprovider).child(userId).child("history");
-        userHistoryDatabase.addListenerForSingleValueEvent(new ValueEventListener() {
+    private void getCustomerHistoryIds() {
+        DatabaseReference CustomerHistoryDatabase = FirebaseDatabase.getInstance().getReference().child("Users").child(CustomerOrServiceProvider).child(CustomerId).child("history");
+        CustomerHistoryDatabase.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
                 if(dataSnapshot.exists()){
                     for(DataSnapshot history : dataSnapshot.getChildren()){
-                        FetchRideInformation(history.getKey());
+                        FetchRequestInformation(history.getKey());
                     }
                 }
             }
@@ -62,20 +62,20 @@ public class historyCustomer extends AppCompatActivity {
             }
         });
     }
-    private void FetchRideInformation(String rideKey) {
-        DatabaseReference historyDatabase = FirebaseDatabase.getInstance().getReference().child("history").child(rideKey);
+    private void FetchRequestInformation(String RequestKey) {
+        DatabaseReference historyDatabase = FirebaseDatabase.getInstance().getReference().child("history").child(RequestKey);
         historyDatabase.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
                 if(dataSnapshot.exists()){
-                    String rideId = dataSnapshot.getKey();
+                    String RequestId = dataSnapshot.getKey();
                     Long timestamp = 0L;//for show time for ride
                     for (DataSnapshot child : dataSnapshot.getChildren()){
                         if (child.getKey().equals("timestamp")){
                             timestamp = Long.valueOf(child.getValue().toString());
                         }
                     }
-                    HisoryObject obj = new HisoryObject(rideId,getDate(timestamp));
+                    HisoryObject obj = new HisoryObject(RequestId,getDate(timestamp));
                     resultHistory.add(obj);
                     mhistoryAdapter.notifyDataSetChanged();
                 }

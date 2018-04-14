@@ -27,7 +27,7 @@
             android:layout_marginBottom="7sp"/>
 
         <Button
-            android:id="@+id/Receive_Services"
+            android:id="@+id/Receive_Requests"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="Receive Services"

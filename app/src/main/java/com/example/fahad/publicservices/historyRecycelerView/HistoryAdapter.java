@@ -9,9 +9,7 @@ import com.example.fahad.publicservices.R;
 
 import java.util.List;
 
-/**
- * Created by ammar on 3/23/2018.
- */
+
 
 public class HistoryAdapter extends RecyclerView.Adapter<HistoryViewHolders>{
     private List<HisoryObject> itemList;
@@ -33,7 +31,7 @@ public class HistoryAdapter extends RecyclerView.Adapter<HistoryViewHolders>{
 
     @Override
     public void onBindViewHolder(HistoryViewHolders holder, int position) {
-        holder.rideId.setText(itemList.get(position).getRideId());
+        holder.RequestId.setText(itemList.get(position).getRequestId());
         holder.time.setText(itemList.get(position).getTime());
     }
     @Override

@@ -1,24 +1,22 @@
 package com.example.fahad.publicservices.serviceProviderH;
 
-/**
- * Created by fahad on 03/04/2018 AD.
- */
+
 
 public class HisoryObjectS{
-    private String rideId;
+    private String RequestId;
     private String time;
 
 
 
-    public HisoryObjectS(String rideId, String time){
-        this.rideId = rideId;
+    public HisoryObjectS(String RequestId, String time){
+        this.RequestId = RequestId;
         this.time=time;
     }
-    public String getRideId(){
-        return rideId;
+    public String getRequestId(){
+        return RequestId;
     }
-    public void setRideId(String rideId) {
-        this.rideId = rideId;
+    public void setRequestId(String RequestId) {
+        this.RequestId = RequestId;
     }
 
     public String getTime(){

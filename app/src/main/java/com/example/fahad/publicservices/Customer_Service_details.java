@@ -36,13 +36,13 @@ import de.hdodenhof.circleimageview.CircleImageView;
 public class Customer_Service_details extends AppCompatActivity {
     private EditText mTexeProblem;
     private CircleImageView mImageProblem;
-    private Button mConfirm;
+    private Button btnConfirm;
     private FirebaseAuth mAthu;
-    private DatabaseReference mUserDatabase;
-    private String userID;
-    private String textprblem;
+    private DatabaseReference mCustomerDatabase;
+    private String CustomerID;
+    private String TextProblem;
     private Uri resultUri ;
-    private String mProblemUrl;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -50,19 +50,19 @@ public class Customer_Service_details extends AppCompatActivity {
 
         mTexeProblem = (EditText)findViewById(R.id.TextProblem);
         mImageProblem = (CircleImageView)findViewById(R.id.imageProblem) ;
-        mConfirm = (Button)findViewById(R.id.Confirm);
+        btnConfirm = (Button)findViewById(R.id.Confirm);
 
 
         mAthu = FirebaseAuth.getInstance();
-        userID= mAthu.getCurrentUser().getUid();
-        mUserDatabase= FirebaseDatabase.getInstance().getReference().child("Users").child("Customer").child(userID);
+        CustomerID= mAthu.getCurrentUser().getUid();
+        mCustomerDatabase= FirebaseDatabase.getInstance().getReference().child("Users").child("Customer").child(CustomerID);
 
-        if(mUserDatabase.child("Text") != null){
-            mUserDatabase.child("Text").setValue("No Description");
+        if(mCustomerDatabase.child("TextProblem") != null){
+            mCustomerDatabase.child("TextProblem").setValue("No Description");
         }
 
-        if(mUserDatabase.child("problemImage") != null){
-            mUserDatabase.child("problemImage").setValue("https://firebasestorage.googleapis.com/v0/b/publicservices-f6743.appspot.com/o/no_image.png?alt=media&token=1f18abbd-eb33-45d6-9d8e-ca1f522b42f8");
+        if(mCustomerDatabase.child("ProblemImage") != null){
+            mCustomerDatabase.child("ProblemImage").setValue("https://firebasestorage.googleapis.com/v0/b/publicservices-f6743.appspot.com/o/no_image.png?alt=media&token=1f18abbd-eb33-45d6-9d8e-ca1f522b42f8");
         }
 
         mImageProblem.setOnClickListener(new View.OnClickListener() {
@@ -74,10 +74,10 @@ public class Customer_Service_details extends AppCompatActivity {
 
             }
         });
-        mConfirm.setOnClickListener(new View.OnClickListener() {
+        btnConfirm.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                saveUserInfo();
+                saveCustomerInfo();
                 Intent intent = new Intent(Customer_Service_details.this,CustomerMapsActivity.class);
                 startActivity(intent);
                 return;
@@ -90,16 +90,16 @@ public class Customer_Service_details extends AppCompatActivity {
 
 
     //save to db
-    private void saveUserInfo() {
+    private void saveCustomerInfo() {
 
-        textprblem=mTexeProblem.getText().toString();
-        Map userInfo = new HashMap();
-        if(textprblem != "")
-        userInfo.put("Text",textprblem);
+        TextProblem = mTexeProblem.getText().toString();
+        Map CustomerInfo = new HashMap();
+        if(!TextProblem.equals(""))
+            CustomerInfo.put("TextProblem",TextProblem);
 
-        mUserDatabase.updateChildren(userInfo);
+        mCustomerDatabase.updateChildren(CustomerInfo);
         if (resultUri!=null){//save image in db
-            StorageReference filePath = FirebaseStorage.getInstance().getReference().child("Image Problem").child(userID);//like dbrefrence
+            StorageReference filePath = FirebaseStorage.getInstance().getReference().child("Image Problem").child(CustomerID);//like dbrefrence
             Bitmap bitmap=null;
             try {
                 bitmap = MediaStore.Images.Media.getBitmap(getApplication().getContentResolver(),resultUri);
@@ -123,8 +123,8 @@ public class Customer_Service_details extends AppCompatActivity {
                 public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
                     Uri downloadUrl = taskSnapshot.getDownloadUrl();
                     Map newImage = new HashMap();
-                    newImage.put("problemImage", downloadUrl.toString());
-                    mUserDatabase.updateChildren(newImage);
+                    newImage.put("ProblemImage", downloadUrl.toString());
+                    mCustomerDatabase.updateChildren(newImage);
 
                     finish();
                     return;

@@ -64,128 +64,131 @@ public class CustomerMapsActivity extends FragmentActivity implements OnMapReady
     GoogleApiClient mGoogleApiClient;
     Location mLastLocation;
     LocationRequest mLocationRequest;
-    private Button  mRequest;
-    private LatLng pickupLocation;
-    private String destination , requestService;
+    private Button btn_Request;
+    private LatLng CustomerLocation;
+    private String Service;
     private Boolean requestBol = false;
     SupportMapFragment mapFragment;
-    private Marker pickupMarker ;// delete marker when cancel
-    private RatingBar mratingBar;// rating bar for see rating for provider
-    private LinearLayout  mseviceinfotop;
-    private RoundKornerLinearLayout mseviceinfo;
-    private CircleImageView mseviceImge;// can send image for problem
-    private TextView mseviceName ,mservicphoneph ,mseviceNametop,mservicphonephtop;
+    private Marker CustomerLocationMarker ;// delete marker when cancel
+    private RatingBar mRatingBar;// rating bar for see rating for provider
+    private LinearLayout  mServiceProviderInfoTop;
+    private RoundKornerLinearLayout mServiceProviderInfo;
+    private CircleImageView mServiceProviderImage;// can send image for problem
+    private TextView mServiceProviderName ,mServiceProviderPhone ,mServiceProviderNameTop,mServiceProviderPhoneTop;
     private RadioGroup mRadioGroup;
-    private Button gotIt , btn_cancle ;
-    private TextView distant;
+    private Button btn_gotIt , btn_cancel ;
+    private TextView RequestStatus;
 
-    //can send text
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_customer_maps);
         // Obtain the SupportMapFragment and get notified when the map is ready to be used.
         mapFragment = (SupportMapFragment) getSupportFragmentManager().findFragmentById(R.id.map);
-        gotIt=(Button)findViewById(R.id.gotIt);
+        btn_gotIt=(Button)findViewById(R.id.gotIt);
 
         if (ActivityCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
             ActivityCompat.requestPermissions(CustomerMapsActivity.this,new String[]{android.Manifest.permission.ACCESS_FINE_LOCATION},LOCATION_REQUEST_CODE);
         }else {
             mapFragment.getMapAsync(this);//start map
         }
-        btn_cancle = (Button)findViewById(R.id.btn_cancle);
-        mseviceinfo = (RoundKornerLinearLayout)findViewById(R.id.seviceinfo);
-        mseviceinfotop = (LinearLayout)findViewById(R.id.seviceinfotop);
-        mseviceImge = (CircleImageView) findViewById(R.id.seviceImge);
-        mseviceName = (TextView) findViewById(R.id.seviceName);
-        mservicphoneph  = (TextView) findViewById(R.id.servicphone);
-        mseviceNametop= (TextView) findViewById(R.id.servicnametop);
-        mservicphonephtop  = (TextView) findViewById(R.id.servicphonetop);
-        distant = (TextView)findViewById(R.id.distant);
-        //__________________________________________
-        mRadioGroup = (RadioGroup)findViewById(R.id.radioGroup);
-        mRadioGroup.check(R.id.car_fix);
+        btn_cancel = (Button)findViewById(R.id.btn_cancle);
+        mServiceProviderInfo = (RoundKornerLinearLayout)findViewById(R.id.seviceinfo);
+        mServiceProviderInfoTop = (LinearLayout)findViewById(R.id.seviceinfotop);
+        mServiceProviderImage = (CircleImageView) findViewById(R.id.seviceImge);
+        mServiceProviderName = (TextView) findViewById(R.id.seviceName);
+        mServiceProviderPhone  = (TextView) findViewById(R.id.servicphone);
+        mServiceProviderNameTop= (TextView) findViewById(R.id.servicnametop);
+        mServiceProviderPhoneTop  = (TextView) findViewById(R.id.servicphonetop);
+        RequestStatus = (TextView)findViewById(R.id.RequestStatus);
 
-        //---------------------------------\
-        mratingBar=(RatingBar)findViewById(R.id.ratingBar);
-        //-
-//----------------------------
-        gotIt=(Button) findViewById(R.id.gotIt);
-        mRequest= (Button)findViewById(R.id.request);
-        gotIt.setOnClickListener(new View.OnClickListener() {
+        mRadioGroup = (RadioGroup)findViewById(R.id.radioGroup);
+        mRadioGroup.check(R.id.electration);
+
+        mRatingBar=(RatingBar)findViewById(R.id.ratingBar);
+        btn_gotIt=(Button)findViewById(R.id.gotIt);
+        btn_Request= (Button)findViewById(R.id.request);
+
+        btn_gotIt.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                mseviceinfo.setVisibility(View.GONE);
-                mseviceinfotop.setVisibility(View.VISIBLE);
-                btn_cancle.setEnabled(false);
+                mServiceProviderInfo.setVisibility(View.GONE);
+                mServiceProviderInfoTop.setVisibility(View.VISIBLE);
+                btn_cancel.setEnabled(false);
             }
         });
-        //----------------------------
-        btn_cancle.setOnClickListener(new View.OnClickListener(){
-                                          @Override
-                                          public void onClick(View v) {
-                                              if (requestBol) {
-                                                  cancel();
-                                                  Vibrator c = (Vibrator) getSystemService(Context.VIBRATOR_SERVICE);
-                                                  c.vibrate(1000);
-                                              }
-                                          }
-                                      }
+
+
+        //========================================================================================================
+
+
+        btn_cancel.setOnClickListener(new View.OnClickListener(){
+            @Override
+           public void onClick(View v) {
+         if (requestBol) {
+            cancel();
+            Vibrator c = (Vibrator) getSystemService(Context.VIBRATOR_SERVICE);
+            c.vibrate(1000);
+         }
+            }
+        }
         );
-        //=============================
-
-        mRequest.setOnClickListener(new View.OnClickListener() {
-                                        @Override
-                                        public void onClick(View v) {
-                                            distant.setVisibility(View.VISIBLE);
-                                            btn_cancle.setEnabled(true);
-                                            mRequest.setEnabled(false);
 
 
-                                            int selectId = mRadioGroup.getCheckedRadioButtonId();
-                                            //create radio button
-                                            final RadioButton radioButton =(RadioButton)findViewById(selectId);
-                                            if (radioButton.getText()== null){
-                                                return;
-                                            }
-                                            requestService = radioButton.getText().toString();
-
-                                            requestBol = true;
-
-                                            String userId = FirebaseAuth.getInstance().getCurrentUser().getUid();
-
-                                            DatabaseReference ref = FirebaseDatabase.getInstance().getReference("CustomerRequest");
-                                            GeoFire geoFire = new GeoFire(ref);
-                                            geoFire.setLocation(userId, new GeoLocation(mLastLocation.getLatitude(), mLastLocation.getLongitude()));
-
-                                            pickupLocation = new LatLng(mLastLocation.getLatitude(), mLastLocation.getLongitude());
-                                            pickupMarker = mMap.addMarker(new MarkerOptions().position(pickupLocation).title("Pickup Here").icon(BitmapDescriptorFactory.fromResource(R.drawable.pin)));
-
-                                            //Toast.makeText(getApplicationContext(),"Getting your Driver",Toast.LENGTH_SHORT).show();
-                                            distant.setText("Getting your Driver");
-                                            getClosestService();
+        //========================================================================================================
 
 
+        btn_Request.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                RequestStatus.setVisibility(View.VISIBLE);
+                btn_cancel.setEnabled(true);
+                btn_Request.setEnabled(false);
 
-                                        }
-                                    }
+                int selectId = mRadioGroup.getCheckedRadioButtonId();
+                //create radio button
+                final RadioButton radioButton =(RadioButton)findViewById(selectId);
+                if (radioButton.getText()== null){
+                    return;
+                }
+                Service = radioButton.getText().toString();
+                requestBol = true;
+
+                String userId = FirebaseAuth.getInstance().getCurrentUser().getUid();
+                DatabaseReference ref = FirebaseDatabase.getInstance().getReference("CustomerRequest");
+
+                GeoFire geoFire = new GeoFire(ref);
+                geoFire.setLocation(userId, new GeoLocation(mLastLocation.getLatitude(), mLastLocation.getLongitude()));
+
+                CustomerLocation = new LatLng(mLastLocation.getLatitude(), mLastLocation.getLongitude());
+                CustomerLocationMarker = mMap.addMarker(new MarkerOptions().position(CustomerLocation).icon(BitmapDescriptorFactory.fromResource(R.drawable.pin)));
+
+                 RequestStatus.setText("looking for service provider Available ...");
+                 getClosestServiceProvider();
+             }
+        }
         );
     }
-    //// for service info*/
-    private int radius = 1;
-    private boolean serviceFound = false;
-    private String serviceFoundID ;
-    GeoQuery geoQuery;
-    private void getClosestService(){
-        DatabaseReference serviclocation = FirebaseDatabase.getInstance().getReference().child("servierAvailable");
 
-        GeoFire geoFire = new GeoFire(serviclocation);
-        geoQuery = geoFire.queryAtLocation(new GeoLocation(pickupLocation.latitude,pickupLocation.longitude),radius);
+
+    //========================================================================================================
+
+
+    private int radius = 1;
+    private boolean ServiceProviderFound = false;
+    private String ServiceProviderFoundID ;
+    GeoQuery geoQuery;
+    private void getClosestServiceProvider(){
+        DatabaseReference ServiceProviderLocation = FirebaseDatabase.getInstance().getReference().child("ServicesProvidersAvailable");
+
+        GeoFire geoFire = new GeoFire(ServiceProviderLocation);
+        geoQuery = geoFire.queryAtLocation(new GeoLocation(CustomerLocation.latitude,CustomerLocation.longitude),radius);
         geoQuery.removeAllListeners();
         geoQuery.addGeoQueryEventListener(new GeoQueryEventListener() {
             @Override
             public void onKeyEntered(String key, GeoLocation location) {
-                if (!serviceFound && requestBol) {
+                if (!ServiceProviderFound && requestBol) {
                     DatabaseReference MuserDatabase = FirebaseDatabase.getInstance().getReference().child("Users").child("ServiceProvider").child(key);
                     MuserDatabase.addListenerForSingleValueEvent(new ValueEventListener(){
                         @Override
@@ -193,65 +196,64 @@ public class CustomerMapsActivity extends FragmentActivity implements OnMapReady
                             if (dataSnapshot.exists() && dataSnapshot.getChildrenCount()>0){
                                 Map<String , Object> ServiceMap=(Map<String , Object>)dataSnapshot.getValue();
                                 //if any an correct plase cheke name db
-                                if (serviceFound){return;}
-                                if (ServiceMap.get("service").equals(requestService)){
-                                    serviceFound = true;
-                                    serviceFoundID = dataSnapshot.getKey();
-                                    DatabaseReference serviceRef = FirebaseDatabase.getInstance().getReference().child("Users").child("ServiceProvider").child(serviceFoundID).child("CustomerRequest");
+                                if (ServiceProviderFound){return;}
+                                if (ServiceMap.get("service").equals(Service)){
+                                    ServiceProviderFound = true;
+                                    ServiceProviderFoundID = dataSnapshot.getKey();
+                                    DatabaseReference ServiceProviderRef = FirebaseDatabase.getInstance().getReference().child("Users").child("ServiceProvider").child(ServiceProviderFoundID).child("CustomerRequest");
                                     //userID --- customerID
-                                    String userID = FirebaseAuth.getInstance().getCurrentUser().getUid();
+                                    String CustomerID = FirebaseAuth.getInstance().getCurrentUser().getUid();
                                     HashMap map = new HashMap();
-                                    map.put("userRideID",userID);
-                                    // map.put("destination",destination);
-                                    serviceRef.updateChildren(map);
-                                    getserviceLocation();
-                                    getserviceinfo();
-                                    gethasWorkEnded();
+                                    map.put("CustomerRequestID",CustomerID); //*********************************
+                                    ServiceProviderRef.updateChildren(map);
+                                    getServiceProviderLocation();
+                                    getServiceProviderInfo();
+                                    WorkEnded();
 
-                                    //Toast.makeText(getApplicationContext()," locking for service location..." ,Toast.LENGTH_SHORT).show();
-                                    distant.setText("locking for service location...");
                                 }
                             }
                         }
                         @Override
                         public void onCancelled(DatabaseError databaseError) {
-
                         }
                     });
                 }
             }
 
             @Override
-
             public void onKeyExited(String key) {
-
             }
 
             @Override
             public void onKeyMoved(String key, GeoLocation location) {
-
             }
 
             @Override
             public void onGeoQueryReady() {
-                if(!serviceFound)
+                if(!ServiceProviderFound)
                 {
                     radius++;
-                    getClosestService();
+                    getClosestServiceProvider();
                 }
             }
+
             @Override
             public void onGeoQueryError(DatabaseError error) {
 
             }
         });
     }
-    private Marker nServiceMarker;
-    private   DatabaseReference driverLocationRef;
-    private ValueEventListener driverLocationRefListener;
-    private void getserviceLocation(){
-        driverLocationRef = FirebaseDatabase.getInstance().getReference().child("serviceWorking").child(serviceFoundID).child("l");
-        driverLocationRefListener = driverLocationRef.addValueEventListener(new ValueEventListener() {
+
+    //========================================================================================================
+
+
+    private Marker ServiceProviderMarker;
+    private DatabaseReference ServiceProviderLocationRef;
+    private ValueEventListener ServiceProviderLocationRefListener;
+
+    private void getServiceProviderLocation(){
+        ServiceProviderLocationRef = FirebaseDatabase.getInstance().getReference().child("ServicesProvidersWorking").child(ServiceProviderFoundID).child("l");
+        ServiceProviderLocationRefListener = ServiceProviderLocationRef.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
                 if(dataSnapshot.exists()&& requestBol){
@@ -259,9 +261,8 @@ public class CustomerMapsActivity extends FragmentActivity implements OnMapReady
                     double locationLat = 0;
                     double locationLng = 0;
 
-                    //mRequest.setText("provider Found");
-                    //Toast.makeText(CustomerMapsActivity.this , "Driver Found" , Toast.LENGTH_LONG).show();
-                    distant.setText("Driver Found");
+
+                    RequestStatus.setText("Service Provider Found");
 
                     if(map.get(0) != null){
                         locationLat = Double.parseDouble(map.get(0).toString());
@@ -269,26 +270,25 @@ public class CustomerMapsActivity extends FragmentActivity implements OnMapReady
                     if(map.get(1) != null){
                         locationLng = Double.parseDouble(map.get(1).toString());
                     }
-                    LatLng driverLatLng = new LatLng(locationLat,locationLng);
-                    if(nServiceMarker != null){
-                        nServiceMarker.remove();
+                    LatLng ServiceProviderLatLng = new LatLng(locationLat,locationLng);
+                    if(ServiceProviderMarker != null){
+                        ServiceProviderMarker.remove();
                     }
-                    nServiceMarker = mMap.addMarker(new MarkerOptions().position(driverLatLng).title("your driver").icon(BitmapDescriptorFactory.fromResource(R.drawable.car)));
+                    ServiceProviderMarker = mMap.addMarker(new MarkerOptions().position(ServiceProviderLatLng).title("Your Service Provider").icon(BitmapDescriptorFactory.fromResource(R.drawable.car)));
 
                     Location loc1 = new Location("");
-                    loc1.setLatitude(pickupLocation.latitude);
-                    loc1.setLongitude(pickupLocation.longitude);
+                    loc1.setLatitude(CustomerLocation.latitude);
+                    loc1.setLongitude(CustomerLocation.longitude);
 
                     Location loc2 = new Location("");
-                    loc2.setLatitude(driverLatLng.latitude);
-                    loc2.setLongitude(driverLatLng.longitude);
+                    loc2.setLatitude(ServiceProviderLatLng.latitude);
+                    loc2.setLongitude(ServiceProviderLatLng.longitude);
                     float distance = loc1.distanceTo(loc2);
 
                     if (distance<1000){
-                        //Toast.makeText(CustomerMapsActivity.this , "provider is here" , Toast.LENGTH_LONG).show();
-                        distant.setText("provider is here");
+                        RequestStatus.setText("Be Ready Service Provider So Close");
                     }else {
-                        distant.setText("Worker found:" + String.valueOf(distance)+" m");
+                        RequestStatus.setText("Service Provider found:" + String.valueOf(distance)+"m");
                     }
                 }
             }
@@ -298,10 +298,14 @@ public class CustomerMapsActivity extends FragmentActivity implements OnMapReady
         });
 
     }
-    private void getserviceinfo(){
-        mseviceinfo.setVisibility(View.VISIBLE);
-        DatabaseReference mUserDatabase  = FirebaseDatabase.getInstance().getReference().child("Users").child("ServiceProvider").child(serviceFoundID);
-        mUserDatabase.addListenerForSingleValueEvent(new ValueEventListener() {
+
+    //========================================================================================================
+
+
+    private void getServiceProviderInfo(){
+        mServiceProviderInfo.setVisibility(View.VISIBLE);
+        DatabaseReference CustomerDatabase  = FirebaseDatabase.getInstance().getReference().child("Users").child("ServiceProvider").child(ServiceProviderFoundID);
+        CustomerDatabase.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
                 if (dataSnapshot.exists() && dataSnapshot.getChildrenCount()>0){
@@ -309,130 +313,142 @@ public class CustomerMapsActivity extends FragmentActivity implements OnMapReady
                     Map<String , Object> map=(Map<String , Object>)dataSnapshot.getValue();
                     //if any an correct plase cheke name db
                     if (map.get("profileImageUrl")!=null) {
-                        Glide.with(getApplication()).load(map.get("profileImageUrl").toString()).into(mseviceImge);
+                        Glide.with(getApplication()).load(map.get("profileImageUrl").toString()).into(mServiceProviderImage);
                     }
                     if (map.get("name")!=null){
-                        mseviceName.setText(map.get("name").toString());
-                        mseviceNametop.setText(map.get("name").toString());
+                        mServiceProviderName.setText(map.get("name").toString());
+                        mServiceProviderNameTop.setText(map.get("name").toString());
                     }
                     if (map.get("phone")!=null) {
-                        mservicphoneph.setText(map.get("phone").toString());
-                        mservicphonephtop.setText(map.get("phone").toString());
+                        mServiceProviderPhone.setText(map.get("phone").toString());
+                        mServiceProviderPhoneTop.setText(map.get("phone").toString());
                     }
                     // calculating provider rating use loop
                     int ratingSum = 0 ;
                     float ratingsTotal = 0;
                     float ratingAvg = 0;
                     for (DataSnapshot child : dataSnapshot.child("rating").getChildren()){
-                        ratingSum = ratingSum+Integer.valueOf(child.getValue().toString());
+                        ratingSum = ratingSum + Integer.valueOf(child.getValue().toString());
                         ratingsTotal++;
                     }
                     // avg
                     if (ratingsTotal != 0){
                         ratingAvg = ratingSum /ratingsTotal;
-                        mratingBar.setRating(ratingAvg);
+                        mRatingBar.setRating(ratingAvg);
                     }
                 }
             }
             @Override
             public void onCancelled(DatabaseError databaseError) {
-            }});} //contune foe displsy 4
-    /// when finish work
-    private DatabaseReference serviceHasEndedRef;
-    private ValueEventListener serviceHasEndedRefListener;
-    private void gethasWorkEnded(){
-        serviceHasEndedRef = FirebaseDatabase.getInstance().getReference().child("Users").child("ServiceProvider").child(serviceFoundID).child("CustomerRequest").child("userRideID");
-        serviceHasEndedRefListener = serviceHasEndedRef.addValueEventListener(new ValueEventListener() {
+            }
+        });
+    }
+
+
+    //========================================================================================================
+
+
+    private DatabaseReference ServiceProviderHasEndedRef;
+    private ValueEventListener ServiceProviderHasEndedRefListener;
+
+    private void WorkEnded(){   //****************************
+        ServiceProviderHasEndedRef = FirebaseDatabase.getInstance().getReference().child("Users").child("ServiceProvider").child(ServiceProviderFoundID).child("CustomerRequest").child("CustomerRequestID");
+        ServiceProviderHasEndedRefListener = ServiceProviderHasEndedRef.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
-                if(dataSnapshot.exists()){
-
-                }else{
+                if(!dataSnapshot.exists()){
                     endWork();
-
-                    //end
-                }}
+                }
+            }
             @Override
             public void onCancelled(DatabaseError databaseError) {
-            }});}
+            }});
+    }
 
-    ///
+
+    //========================================================================================================
+
 
     private  void cancel() {
         requestBol = false;
         geoQuery.removeAllListeners();
-        if (serviceFoundID != null) {
-            DatabaseReference driverRef = FirebaseDatabase.getInstance().getReference().child("Users").child("ServiceProvider").child(serviceFoundID).child("CustomerRequest");
-            driverRef.removeValue();
-            serviceFoundID = null;
+        if (ServiceProviderFoundID != null) {
+            DatabaseReference ServiceProviderRef = FirebaseDatabase.getInstance().getReference().child("Users").child("ServiceProvider").child(ServiceProviderFoundID).child("CustomerRequest");
+            ServiceProviderRef.removeValue();
+            ServiceProviderFoundID = null;
         }
-        String userId = FirebaseAuth.getInstance().getCurrentUser().getUid();
+        String CustomerId = FirebaseAuth.getInstance().getCurrentUser().getUid();
         DatabaseReference ref = FirebaseDatabase.getInstance().getReference("CustomerRequest");
         GeoFire geoFire = new GeoFire(ref);
-        geoFire.removeLocation(userId);
-        if (pickupMarker != null) {
-            pickupMarker.remove();
+        geoFire.removeLocation(CustomerId);
+        if (CustomerLocationMarker != null) {
+            CustomerLocationMarker.remove();
         }
-        if (nServiceMarker != null) {
-            nServiceMarker.remove();
+        if (ServiceProviderMarker != null) {
+            ServiceProviderMarker.remove();
         }
 
         Toast.makeText(getApplicationContext(),"  The Request has been Canceled " ,Toast.LENGTH_LONG).show();
 
-        //contuunie for display 5
-        mseviceinfo.setVisibility(View.GONE);
-        mseviceinfotop.setVisibility(View.GONE);
-        mservicphoneph.setText("");
-        mseviceName.setText("");
-        mseviceImge.setImageResource(R.drawable.profile);
-        DatabaseReference ServiceDetails = FirebaseDatabase.getInstance().getReference().child("Users").child("Customer").child(userId);
-        ServiceDetails.child("problemImage").setValue("https://firebasestorage.googleapis.com/v0/b/publicservices-f6743.appspot.com/o/no_image.png?alt=media&token=1f18abbd-eb33-45d6-9d8e-ca1f522b42f8");
-        ServiceDetails.child("Text").setValue("No Description");
-        btn_cancle.setEnabled(false);
-        distant.setVisibility(View.GONE);
-        mRequest.setEnabled(true);
+        mServiceProviderInfo.setVisibility(View.GONE);
+        mServiceProviderInfoTop.setVisibility(View.GONE);
+        mServiceProviderPhone.setText("");  //***********************
+        mServiceProviderName.setText("");   //***********************
+        mServiceProviderImage.setImageResource(R.drawable.profile);
+        DatabaseReference ServiceDetails = FirebaseDatabase.getInstance().getReference().child("Users").child("Customer").child(CustomerId);
+        ServiceDetails.child("ProblemImage").setValue("https://firebasestorage.googleapis.com/v0/b/publicservices-f6743.appspot.com/o/no_image.png?alt=media&token=1f18abbd-eb33-45d6-9d8e-ca1f522b42f8");
+        ServiceDetails.child("TextProblem").setValue("No Description");
+        btn_cancel.setEnabled(false);
+        RequestStatus.setVisibility(View.GONE);
+        btn_Request.setEnabled(true);
     }
 
-    ////
 
-    private  void endWork() {
+    //========================================================================================================
+
+
+    private void endWork() {  //****************************
         requestBol = false;
         geoQuery.removeAllListeners();
-        driverLocationRef.removeEventListener(driverLocationRefListener);
-        serviceHasEndedRef.removeEventListener(serviceHasEndedRefListener);
-        if (serviceFoundID != null) {
-            DatabaseReference driverRef = FirebaseDatabase.getInstance().getReference().child("Users").child("ServiceProvider").child(serviceFoundID).child("CustomerRequest");
-            driverRef.removeValue();
-            serviceFoundID = null;
+        ServiceProviderLocationRef.removeEventListener(ServiceProviderLocationRefListener);
+        ServiceProviderHasEndedRef.removeEventListener(ServiceProviderHasEndedRefListener);
+        if (ServiceProviderFoundID != null) {
+            DatabaseReference ServiceProviderRef = FirebaseDatabase.getInstance().getReference().child("Users").child("ServiceProvider").child(ServiceProviderFoundID).child("CustomerRequest");
+            ServiceProviderRef.removeValue();
+            ServiceProviderFoundID = null;
         }
-        serviceFound = false;
+        ServiceProviderFound = false;
         radius = 1;
-        String userId = FirebaseAuth.getInstance().getCurrentUser().getUid();
+        String CustomerId = FirebaseAuth.getInstance().getCurrentUser().getUid();
 
         DatabaseReference ref = FirebaseDatabase.getInstance().getReference("CustomerRequest");
         GeoFire geoFire = new GeoFire(ref);
-        geoFire.removeLocation(userId);
+        geoFire.removeLocation(CustomerId);
 
-        if (pickupMarker != null) {
-            pickupMarker.remove();
+        if (CustomerLocationMarker != null) {
+            CustomerLocationMarker.remove();
         }
-        if (nServiceMarker != null) {
-            nServiceMarker.remove();
+        if (ServiceProviderMarker != null) {
+            ServiceProviderMarker.remove();
         }
 
 
-        mseviceinfo.setVisibility(View.GONE);
-        mseviceinfotop.setVisibility(View.GONE);
-        mservicphoneph.setText("");
-        mseviceName.setText("");
-        mseviceImge.setImageResource(R.drawable.profile);
-        DatabaseReference ServiceDetails = FirebaseDatabase.getInstance().getReference().child("Users").child("Customer").child(userId);
-        ServiceDetails.child("problemImage").setValue("https://firebasestorage.googleapis.com/v0/b/publicservices-f6743.appspot.com/o/no_image.png?alt=media&token=1f18abbd-eb33-45d6-9d8e-ca1f522b42f8");
-        ServiceDetails.child("Text").setValue("No Description");
-        btn_cancle.setEnabled(false);
-        distant.setVisibility(View.GONE);
-        mRequest.setEnabled(true);
+        mServiceProviderInfo.setVisibility(View.GONE);
+        mServiceProviderInfoTop.setVisibility(View.GONE);
+        mServiceProviderPhone.setText("");
+        mServiceProviderName.setText("");
+        mServiceProviderImage.setImageResource(R.drawable.profile);
+        DatabaseReference ServiceDetails = FirebaseDatabase.getInstance().getReference().child("Users").child("Customer").child(CustomerId);
+        ServiceDetails.child("ProblemImage").setValue("https://firebasestorage.googleapis.com/v0/b/publicservices-f6743.appspot.com/o/no_image.png?alt=media&token=1f18abbd-eb33-45d6-9d8e-ca1f522b42f8");
+        ServiceDetails.child("TextProblem").setValue("No Description");
+        btn_cancel.setEnabled(false);
+        RequestStatus.setVisibility(View.GONE);
+        btn_Request.setEnabled(true);
     }
+
+
+    //========================================================================================================
+
 
     @Override
     public void onMapReady(GoogleMap googleMap) {
@@ -459,11 +475,8 @@ public class CustomerMapsActivity extends FragmentActivity implements OnMapReady
 
             LatLng latLng = new LatLng(location.getLatitude(),location.getLongitude());
 
-
             mMap.moveCamera(CameraUpdateFactory.newLatLng(latLng));
             mMap.getUiSettings().setZoomControlsEnabled(true);
-
-
         }
     }
     @Override
@@ -483,6 +496,7 @@ public class CustomerMapsActivity extends FragmentActivity implements OnMapReady
     @Override
     public void onConnectionFailed(@NonNull ConnectionResult connectionResult) {
     }
+
     final int LOCATION_REQUEST_CODE = 1;
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
@@ -493,7 +507,7 @@ public class CustomerMapsActivity extends FragmentActivity implements OnMapReady
                     mapFragment.getMapAsync(this);//start map
 
                 }else {
-                    Toast.makeText(getApplicationContext(),"Please provide the premission",Toast.LENGTH_LONG).show();
+                    Toast.makeText(getApplicationContext(),"Please provide the permission",Toast.LENGTH_LONG).show();
                 }
                 break;
             }
@@ -503,13 +517,10 @@ public class CustomerMapsActivity extends FragmentActivity implements OnMapReady
     protected void onStop() {
         super.onStop();
     }
-
-
-
     @Override
     public void onBackPressed() {
-            if(serviceFoundID != null){
-                Toast.makeText(CustomerMapsActivity.this , "wait until the order is finished" , Toast.LENGTH_SHORT).show();
+            if(ServiceProviderFoundID != null){
+                Toast.makeText(CustomerMapsActivity.this , "Wait until the order is finished" , Toast.LENGTH_LONG).show();
             }else{
                 super.onBackPressed();
             }

@@ -40,12 +40,12 @@ public class EditProfile extends AppCompatActivity {
     Button btnSubmit;
     CircleImageView image;
     private Uri resultUri ;
-    private String  mphone , mname , mProfileUrl;
+    private String  Phone , Name , ProfileUrl;
 
     private String accountType ;
-    private FirebaseAuth mAthu;
-    private DatabaseReference mUserDatabase;
-    private String userID ;
+    private FirebaseAuth Athu;
+    private DatabaseReference CustomerDatabase;
+    private String CustomerID ;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -59,12 +59,17 @@ public class EditProfile extends AppCompatActivity {
         btnSubmit = (Button)findViewById(R.id.btnSubmit);
         accountType = getIntent().getStringExtra("accountType");
 
-        //init firebase
-        mAthu = FirebaseAuth.getInstance();
-        userID= mAthu.getCurrentUser().getUid();
-        mUserDatabase= FirebaseDatabase.getInstance().getReference().child("Users").child(accountType).child(userID);
+        if(accountType.equals("Customer")){
+            image.setVisibility(View.GONE);
 
-        getUserinfo();
+        }
+
+        //init firebase
+        Athu = FirebaseAuth.getInstance();
+        CustomerID= Athu.getCurrentUser().getUid();
+        CustomerDatabase= FirebaseDatabase.getInstance().getReference().child("Users").child(accountType).child(CustomerID);
+
+        getCustomerInfo();
 
         image.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -75,20 +80,20 @@ public class EditProfile extends AppCompatActivity {
             }
         });
 
-        getUserinfo();
+        getCustomerInfo();
         btnSubmit.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                saveUserInfo();
+                saveCustomerInfo();
             }
         });
 
 
     }
 
-    private void getUserinfo() {
+    private void getCustomerInfo() {
 
-        mUserDatabase.addValueEventListener(new ValueEventListener() {
+        CustomerDatabase.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
                 if (dataSnapshot.exists() && dataSnapshot.getChildrenCount()>0){
@@ -97,17 +102,17 @@ public class EditProfile extends AppCompatActivity {
                     //if any an correct plase cheke name db
 
                     if (map.get("name")!=null){
-                        mname=map.get("name").toString();
-                        edtName.setText(mname);
+                        Name=map.get("name").toString();
+                        edtName.setText(Name);
                     }
                     if (map.get("phone")!=null) {
-                        mphone = map.get("phone").toString();
-                        edtPhone.setText(mphone);
+                        Phone = map.get("phone").toString();
+                        edtPhone.setText(Phone);
                     }
 
                     if (map.get("profileImageUrl")!=null){
-                        mProfileUrl = map.get("profileImageUrl").toString();
-                        Glide.with(getApplication()).load(mProfileUrl).into(image);
+                        ProfileUrl = map.get("profileImageUrl").toString();
+                        Glide.with(getApplication()).load(ProfileUrl).into(image);
                     }
                 }
             }
@@ -119,20 +124,20 @@ public class EditProfile extends AppCompatActivity {
         });
     }
 
-    private void saveUserInfo() {
+    private void saveCustomerInfo() {
 
 
-        mname=edtName.getText().toString();
-        mphone=edtPhone.getText().toString();
+        Name = edtName.getText().toString();
+        Phone = edtPhone.getText().toString();
 
-        Map userInfo = new HashMap();
-        userInfo.put("phone",mphone);
-        userInfo.put("name",mname);
+        Map CustomerInfo = new HashMap();
+        CustomerInfo.put("phone",Phone);
+        CustomerInfo.put("name",Name);
 
-        mUserDatabase.updateChildren(userInfo);
+        CustomerDatabase.updateChildren(CustomerInfo);
 
         if (resultUri!=null){//save image in db
-            StorageReference filePath = FirebaseStorage.getInstance().getReference().child("Profile_Image ").child(userID);//like dbrefrence
+            StorageReference filePath = FirebaseStorage.getInstance().getReference().child("Profile_Image ").child(CustomerID);
             Bitmap bitmap=null;
             try {
                 bitmap = MediaStore.Images.Media.getBitmap(getApplication().getContentResolver(),resultUri);
@@ -158,7 +163,7 @@ public class EditProfile extends AppCompatActivity {
                     Uri downloadUrl = taskSnapshot.getDownloadUrl();
                     Map newImage = new HashMap();
                     newImage.put("profileImageUrl",downloadUrl.toString());
-                    mUserDatabase.updateChildren(newImage);
+                    CustomerDatabase.updateChildren(newImage);
 
                     finish();
                     return;
