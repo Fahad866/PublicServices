@@ -19,8 +19,11 @@ import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 import com.rengwuxian.materialedittext.MaterialEditText;
 
 import dmax.dialog.SpotsDialog;
@@ -105,17 +108,17 @@ public class ServiceProviderMainActivity extends AppCompatActivity {
 
                 //check validation
                 if (TextUtils.isEmpty(edtEmail.getText().toString())) {
-                    Snackbar.make(rootLayout, "Please enter email address", Snackbar.LENGTH_SHORT).show();
+                    Snackbar.make(rootLayout, "Please enter email address", Snackbar.LENGTH_LONG).show();
                     return;
                 }
 
                 if (TextUtils.isEmpty(edtPassword.getText().toString())) {
-                    Snackbar.make(rootLayout, "Please enter password", Snackbar.LENGTH_SHORT).show();
+                    Snackbar.make(rootLayout, "Please enter password", Snackbar.LENGTH_LONG).show();
                     return;
                 }
 
                 if (edtPassword.getText().toString().length() < 6) {
-                    Snackbar.make(rootLayout, "password too short !!", Snackbar.LENGTH_SHORT).show();
+                    Snackbar.make(rootLayout, "password too short !!", Snackbar.LENGTH_LONG).show();
                     return;
                 }
 
@@ -124,27 +127,37 @@ public class ServiceProviderMainActivity extends AppCompatActivity {
                 waitingDialog.show();
 
                 //signin
-                auth.signInWithEmailAndPassword(edtEmail.getText().toString() , edtPassword.getText().toString()).addOnSuccessListener(new OnSuccessListener<AuthResult>() {
-                    @Override
-                    public void onSuccess(AuthResult authResult) {
+                auth.signInWithEmailAndPassword(edtEmail.getText().toString() , edtPassword.getText().toString())
+                        .addOnSuccessListener(new OnSuccessListener<AuthResult>() {
+                            @Override
+                            public void onSuccess(AuthResult authResult) {
+                                waitingDialog.dismiss();
+                                String ServiceProviderID = auth.getCurrentUser().getUid();
+                                DatabaseReference CustomerRef = FirebaseDatabase.getInstance().getReference().child("Users").child("ServiceProvider").child(ServiceProviderID);
+                                CustomerRef.addListenerForSingleValueEvent(new ValueEventListener() {
+                                    @Override
+                                    public void onDataChange(DataSnapshot dataSnapshot) {
+                                        if(dataSnapshot.exists()){
+                                            startActivity(new Intent(ServiceProviderMainActivity.this, ServiceProviderMenuPage.class));
+                                            finish();
+                                        }else {
+                                            Snackbar.make(rootLayout, "You are not Service Provider", Snackbar.LENGTH_LONG).show();
+                                        }
+                                    }
 
-                        if(edtEmail.getText().toString().equals("admin@admin.com") && edtPassword.getText().toString().equals("admin123")) {
-                            waitingDialog.dismiss();
-                            Intent intent = new Intent(ServiceProviderMainActivity.this, AdminPage.class);
-                            startActivity(intent);
-                        }else{
-                            waitingDialog.dismiss();
-                            startActivity(new Intent(ServiceProviderMainActivity.this , ServiceProviderMenuPage.class));
-                            finish();
-                        }
+                                    @Override
+                                    public void onCancelled(DatabaseError databaseError) {
 
-                    }
-                })
+                                    }
+                                });
+
+                            }
+                        })
                         .addOnFailureListener(new OnFailureListener() {
                             @Override
                             public void onFailure(@NonNull Exception e) {
                                 waitingDialog.dismiss();
-                                Snackbar.make(rootLayout, "Failed" + e.getMessage(), Snackbar.LENGTH_SHORT).show();
+                                Snackbar.make(rootLayout, "failed" + e.getMessage(), Snackbar.LENGTH_LONG).show();
 
                                 //active sign in button
                                 btnSignIn.setEnabled(true);
@@ -190,27 +203,27 @@ public class ServiceProviderMainActivity extends AppCompatActivity {
 
                 //check validation
                 if(TextUtils.isEmpty(edtEmail.getText().toString())){
-                    Snackbar.make(rootLayout , "Please enter email address" , Snackbar.LENGTH_SHORT).show();
+                    Snackbar.make(rootLayout , "Please enter email address" , Snackbar.LENGTH_LONG).show();
                     return;
                 }
 
                 if(TextUtils.isEmpty(edtPassword.getText().toString())){
-                    Snackbar.make(rootLayout , "Please enter password" , Snackbar.LENGTH_SHORT).show();
+                    Snackbar.make(rootLayout , "Please enter password" , Snackbar.LENGTH_LONG).show();
                     return;
                 }
 
                 if(edtPassword.getText().toString().length() < 6){
-                    Snackbar.make(rootLayout , "password too short !!" , Snackbar.LENGTH_SHORT).show();
+                    Snackbar.make(rootLayout , "password too short !!" , Snackbar.LENGTH_LONG).show();
                     return;
                 }
 
                 if(TextUtils.isEmpty(edtName.getText().toString())){
-                    Snackbar.make(rootLayout , "Please enter name" , Snackbar.LENGTH_SHORT).show();
+                    Snackbar.make(rootLayout , "Please enter name" , Snackbar.LENGTH_LONG).show();
                     return;
                 }
 
                 if(TextUtils.isEmpty(edtPhone.getText().toString())){
-                    Snackbar.make(rootLayout , "Please enter phone number" , Snackbar.LENGTH_SHORT).show();
+                    Snackbar.make(rootLayout , "Please enter phone number" , Snackbar.LENGTH_LONG).show();
                     return;
                 }
 
@@ -239,7 +252,7 @@ public class ServiceProviderMainActivity extends AppCompatActivity {
                                 .addOnFailureListener(new OnFailureListener() {
                                     @Override
                                     public void onFailure(@NonNull Exception e) {
-                                        Snackbar.make(rootLayout , "Failed" + e.getMessage() , Snackbar.LENGTH_SHORT).show();
+                                        Snackbar.make(rootLayout , "failed" + e.getMessage() , Snackbar.LENGTH_LONG).show();
                                     }
                                 });
                     }
@@ -247,7 +260,7 @@ public class ServiceProviderMainActivity extends AppCompatActivity {
                         .addOnFailureListener(new OnFailureListener() {
                             @Override
                             public void onFailure(@NonNull Exception e) {
-                                Snackbar.make(rootLayout , "Failed" + e.getMessage() , Snackbar.LENGTH_SHORT).show();
+                                Snackbar.make(rootLayout , "failed" + e.getMessage() , Snackbar.LENGTH_LONG).show();
                             }
                         });
 

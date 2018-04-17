@@ -89,6 +89,7 @@
             android:screenOrientation="portrait" />
         <activity android:name=".AdminPage" />
         <activity android:name=".AdminServicesDetails" />
+        <activity android:name=".AdminHistory"></activity>
     </application>
 
 </manifest>

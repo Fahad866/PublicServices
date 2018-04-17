@@ -115,7 +115,6 @@ public class CustomerMapsActivity extends FragmentActivity implements OnMapReady
             public void onClick(View v) {
                 mServiceProviderInfo.setVisibility(View.GONE);
                 mServiceProviderInfoTop.setVisibility(View.VISIBLE);
-                btn_cancel.setEnabled(false);
             }
         });
 
@@ -284,6 +283,10 @@ public class CustomerMapsActivity extends FragmentActivity implements OnMapReady
                     loc2.setLatitude(ServiceProviderLatLng.latitude);
                     loc2.setLongitude(ServiceProviderLatLng.longitude);
                     float distance = loc1.distanceTo(loc2);
+
+                    if(distance<5000) {
+                        btn_cancel.setEnabled(false);
+                    }
 
                     if (distance<1000){
                         RequestStatus.setText("Be Ready Service Provider So Close");

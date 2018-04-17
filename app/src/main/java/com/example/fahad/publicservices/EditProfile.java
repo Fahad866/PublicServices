@@ -126,7 +126,6 @@ public class EditProfile extends AppCompatActivity {
 
     private void saveCustomerInfo() {
 
-
         Name = edtName.getText().toString();
         Phone = edtPhone.getText().toString();
 
