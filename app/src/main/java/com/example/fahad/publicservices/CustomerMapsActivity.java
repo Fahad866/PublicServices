@@ -528,6 +528,12 @@ public class CustomerMapsActivity extends FragmentActivity implements OnMapReady
                 super.onBackPressed();
             }
     }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        cancel();
+    }
 }
 
 

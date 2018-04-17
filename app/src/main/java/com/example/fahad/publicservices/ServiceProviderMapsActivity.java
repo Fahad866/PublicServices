@@ -478,11 +478,17 @@ public class ServiceProviderMapsActivity extends FragmentActivity implements OnM
     @Override
     public void onBackPressed() {
         if(CustomerID != ""){
-            Toast.makeText(ServiceProviderMapsActivity.this , "wait until the order is finished" , Toast.LENGTH_SHORT).show();
+            Toast.makeText(ServiceProviderMapsActivity.this , "wait until the order is finished" , Toast.LENGTH_LONG).show();
         }else if(Price.toString().equals("0")){
-            Toast.makeText(ServiceProviderMapsActivity.this , "Please add price" , Toast.LENGTH_SHORT).show();
+            Toast.makeText(ServiceProviderMapsActivity.this , "Please add price" , Toast.LENGTH_LONG).show();
         }else{
             super.onBackPressed();
         }
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        endWork();
     }
 }

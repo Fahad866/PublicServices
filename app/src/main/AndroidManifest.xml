@@ -18,6 +18,10 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
+
+        <service android:name=".KillApp"
+            android:stopWithTask="false"/>
+
         <activity
             android:name=".MainActivity"
             android:screenOrientation="portrait">
@@ -87,9 +91,7 @@
         <activity
             android:name=".historyServiceProviderSingle"
             android:screenOrientation="portrait" />
-        <activity android:name=".AdminPage" />
-        <activity android:name=".AdminServicesDetails" />
-        <activity android:name=".AdminHistory"></activity>
+
     </application>
 
 </manifest>

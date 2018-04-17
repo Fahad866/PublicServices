@@ -19,6 +19,9 @@ public class MainActivity extends AppCompatActivity {
         btnCustomer = (Button)findViewById(R.id.btnUser);
         btnServiceProvider = (Button)findViewById(R.id.btnServiceProvider);
 
+        startService(new Intent(MainActivity.this , KillApp.class));
+
+
         btnCustomer.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
