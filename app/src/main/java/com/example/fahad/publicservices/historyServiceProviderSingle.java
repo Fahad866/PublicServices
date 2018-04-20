@@ -1,6 +1,11 @@
 package com.example.fahad.publicservices;
 
+import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
+import android.net.ConnectivityManager;
+import android.provider.Settings;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.text.format.DateFormat;
@@ -32,6 +37,8 @@ public class historyServiceProviderSingle extends AppCompatActivity{
         super.onCreate(savedInstanceState);
         setContentView(R.layout.history_service_provider_single);
 
+        CheckingInternetConnection();
+
         Price = (TextView) findViewById(R.id.ppp);
         date = (TextView) findViewById(R.id.date);
         CustomerPhone = (TextView) findViewById(R.id.servicephone);
@@ -43,6 +50,26 @@ public class historyServiceProviderSingle extends AppCompatActivity{
         historyRequestInfoDb = FirebaseDatabase.getInstance().getReference().child("history").child(RequestId);
         getRequestInfo();
         getCustomerInfo();
+    }
+
+    public void CheckingInternetConnection() {
+        String title = "internet not found";
+        String message = "Click Setting and enable internet";
+        ConnectivityManager connectivityManager;
+        connectivityManager = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
+
+        if (connectivityManager.getActiveNetworkInfo() == null) {
+            AlertDialog.Builder builder = new AlertDialog.Builder(this);
+            builder.setTitle(title);
+            builder.setMessage(message);
+            builder.setPositiveButton("Setting", new DialogInterface.OnClickListener() {
+                public void onClick(DialogInterface dialogInterface, int i) {
+                    startActivity(new Intent(Settings.ACTION_WIFI_SETTINGS));
+                }
+            });
+            builder.setNegativeButton("Cancel", null);
+            builder.create().show();
+        }
     }
 
     private void getRequestInfo() {

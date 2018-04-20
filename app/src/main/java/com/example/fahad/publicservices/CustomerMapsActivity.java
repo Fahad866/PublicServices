@@ -2,16 +2,21 @@ package com.example.fahad.publicservices;
 
 import android.*;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Color;
 import android.location.Location;
+import android.location.LocationManager;
+import android.net.ConnectivityManager;
 import android.os.Vibrator;
+import android.provider.Settings;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.FragmentActivity;
 import android.os.Bundle;
+import android.support.v7.app.AlertDialog;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
@@ -87,12 +92,11 @@ public class CustomerMapsActivity extends FragmentActivity implements OnMapReady
         // Obtain the SupportMapFragment and get notified when the map is ready to be used.
         mapFragment = (SupportMapFragment) getSupportFragmentManager().findFragmentById(R.id.map);
         btn_gotIt=(Button)findViewById(R.id.gotIt);
+        mapFragment.getMapAsync(CustomerMapsActivity.this); //start map
 
-        if (ActivityCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-            ActivityCompat.requestPermissions(CustomerMapsActivity.this,new String[]{android.Manifest.permission.ACCESS_FINE_LOCATION},LOCATION_REQUEST_CODE);
-        }else {
-            mapFragment.getMapAsync(this);//start map
-        }
+        CheckingLocationConnection();
+        CheckingInternetConnection();
+
         btn_cancel = (Button)findViewById(R.id.btn_cancle);
         mServiceProviderInfo = (RoundKornerLinearLayout)findViewById(R.id.seviceinfo);
         mServiceProviderInfoTop = (LinearLayout)findViewById(R.id.seviceinfotop);
@@ -141,6 +145,7 @@ public class CustomerMapsActivity extends FragmentActivity implements OnMapReady
         btn_Request.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+
                 RequestStatus.setVisibility(View.VISIBLE);
                 btn_cancel.setEnabled(true);
                 btn_Request.setEnabled(false);
@@ -157,17 +162,62 @@ public class CustomerMapsActivity extends FragmentActivity implements OnMapReady
                 String userId = FirebaseAuth.getInstance().getCurrentUser().getUid();
                 DatabaseReference ref = FirebaseDatabase.getInstance().getReference("CustomerRequest");
 
+
                 GeoFire geoFire = new GeoFire(ref);
                 geoFire.setLocation(userId, new GeoLocation(mLastLocation.getLatitude(), mLastLocation.getLongitude()));
 
+
                 CustomerLocation = new LatLng(mLastLocation.getLatitude(), mLastLocation.getLongitude());
                 CustomerLocationMarker = mMap.addMarker(new MarkerOptions().position(CustomerLocation).icon(BitmapDescriptorFactory.fromResource(R.drawable.pin)));
+
 
                  RequestStatus.setText("looking for service provider Available ...");
                  getClosestServiceProvider();
              }
         }
         );
+    }
+
+
+    public void CheckingLocationConnection() {
+        String title = "GPS not found";
+        String message = "Click Setting and enable GPS";
+        LocationManager locationManager;
+        locationManager = (LocationManager) this.getSystemService(Context.LOCATION_SERVICE);
+
+        if (!locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER)) {
+            AlertDialog.Builder builder = new AlertDialog.Builder(this);
+            builder.setTitle(title);
+            builder.setMessage(message);
+            builder.setPositiveButton("Setting", new DialogInterface.OnClickListener() {
+                public void onClick(DialogInterface dialogInterface, int i) {
+                    startActivity(new Intent(android.provider.Settings.ACTION_LOCATION_SOURCE_SETTINGS));
+                    mapFragment.getMapAsync(CustomerMapsActivity.this); //start map
+                }
+            });
+            builder.setNegativeButton("Cancel", null);
+            builder.create().show();
+        }
+    }
+
+    public void CheckingInternetConnection(){
+        String title = "internet not found";
+        String message = "Click Setting and enable internet";
+        ConnectivityManager connectivityManager;
+        connectivityManager = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
+
+        if( connectivityManager.getActiveNetworkInfo() == null ) {
+            AlertDialog.Builder builder = new AlertDialog.Builder(this);
+            builder.setTitle(title);
+            builder.setMessage(message);
+            builder.setPositiveButton("Setting", new DialogInterface.OnClickListener() {
+                public void onClick(DialogInterface dialogInterface, int i) {
+                    startActivity(new Intent(Settings.ACTION_WIFI_SETTINGS));
+                }
+            });
+            builder.setNegativeButton("Cancel", null);
+            builder.create().show();
+        }
     }
 
 
@@ -284,7 +334,7 @@ public class CustomerMapsActivity extends FragmentActivity implements OnMapReady
                     loc2.setLongitude(ServiceProviderLatLng.longitude);
                     float distance = loc1.distanceTo(loc2);
 
-                    if(distance<5000) {
+                    if(distance<1000) {
                         btn_cancel.setEnabled(false);
                     }
 
@@ -410,7 +460,7 @@ public class CustomerMapsActivity extends FragmentActivity implements OnMapReady
     //========================================================================================================
 
 
-    private void endWork() {  //****************************
+    public void endWork() {  //****************************
         requestBol = false;
         geoQuery.removeAllListeners();
         ServiceProviderLocationRef.removeEventListener(ServiceProviderLocationRefListener);
@@ -531,9 +581,16 @@ public class CustomerMapsActivity extends FragmentActivity implements OnMapReady
 
     @Override
     protected void onDestroy() {
-        super.onDestroy();
-        cancel();
+        if(ServiceProviderFoundID == null){
+            super.onDestroy();
+        }else {
+            super.onDestroy();
+            cancel();
+        }
+
     }
+
+
 }
 
 

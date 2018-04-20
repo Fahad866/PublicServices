@@ -34,8 +34,6 @@ public class ServiceProviderMainActivity extends AppCompatActivity {
 
     Button btnSignIn , btnRegister;
     RelativeLayout rootLayout;
-    FirebaseAuth auth;
-    DatabaseReference ServiceProvider;
     TextView forgetPassword;
 
     @Override
@@ -49,13 +47,9 @@ public class ServiceProviderMainActivity extends AppCompatActivity {
         rootLayout = (RelativeLayout)findViewById(R.id.rootLayout);
         forgetPassword = (TextView)findViewById(R.id.forgetPassword);
 
-
-        //init firebase
-        auth = FirebaseAuth.getInstance();
-        ServiceProvider = FirebaseDatabase.getInstance().getReference().child("Users").child("ServiceProvider");
-
-
 //-----------------------------------------------------------------------------------------
+
+
         //Event on Register button clicked
         btnRegister.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -70,14 +64,13 @@ public class ServiceProviderMainActivity extends AppCompatActivity {
                 showSignInDialog();
             }
         });
-
+        //Event on forgetPassword button clicked
         forgetPassword.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 forgetPassword();
             }
         });
-
 
     }
 
@@ -96,15 +89,9 @@ public class ServiceProviderMainActivity extends AppCompatActivity {
 
         dialog.setView(signin_layout);
 
-        //set button
         dialog.setPositiveButton("SIGN IN", new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
-
-                dialog.dismiss();
-
-
-
 
                 //check validation
                 if (TextUtils.isEmpty(edtEmail.getText().toString())) {
@@ -122,25 +109,27 @@ public class ServiceProviderMainActivity extends AppCompatActivity {
                     return;
                 }
 
-                //wating dialog
+                //waiting dialog
                 final SpotsDialog waitingDialog = new SpotsDialog(ServiceProviderMainActivity.this);
                 waitingDialog.show();
 
                 //signin
-                auth.signInWithEmailAndPassword(edtEmail.getText().toString() , edtPassword.getText().toString())
+                FirebaseAuth.getInstance().signInWithEmailAndPassword(edtEmail.getText().toString() , edtPassword.getText().toString())
                         .addOnSuccessListener(new OnSuccessListener<AuthResult>() {
                             @Override
                             public void onSuccess(AuthResult authResult) {
                                 waitingDialog.dismiss();
-                                String ServiceProviderID = auth.getCurrentUser().getUid();
+                                String ServiceProviderID = FirebaseAuth.getInstance().getCurrentUser().getUid();
                                 DatabaseReference CustomerRef = FirebaseDatabase.getInstance().getReference().child("Users").child("ServiceProvider").child(ServiceProviderID);
                                 CustomerRef.addListenerForSingleValueEvent(new ValueEventListener() {
                                     @Override
                                     public void onDataChange(DataSnapshot dataSnapshot) {
                                         if(dataSnapshot.exists()){
+                                            //if the Service Provider email and password found in Service Provider database
                                             startActivity(new Intent(ServiceProviderMainActivity.this, ServiceProviderMenuPage.class));
                                             finish();
                                         }else {
+                                            //if the Service Provider email and password not found in Service Provider database
                                             Snackbar.make(rootLayout, "You are not Service Provider", Snackbar.LENGTH_LONG).show();
                                         }
                                     }
@@ -154,13 +143,17 @@ public class ServiceProviderMainActivity extends AppCompatActivity {
                             }
                         })
                         .addOnFailureListener(new OnFailureListener() {
+                            //cases this Failure will occur:
+                            // 1- Email badly formatted
+                            // 2- Email not found
+                            // 3- no internet connection
                             @Override
                             public void onFailure(@NonNull Exception e) {
                                 waitingDialog.dismiss();
                                 Snackbar.make(rootLayout, "failed" + e.getMessage(), Snackbar.LENGTH_LONG).show();
 
                                 //active sign in button
-                                btnSignIn.setEnabled(true);
+                                btnSignIn.setEnabled(true); //**************************************
 
                             }
                         });
@@ -194,12 +187,9 @@ public class ServiceProviderMainActivity extends AppCompatActivity {
 
         dialog.setView(register_layout);
 
-        //set button
         dialog.setPositiveButton("REGISTER", new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
-
-                dialog.dismiss();
 
                 //check validation
                 if(TextUtils.isEmpty(edtEmail.getText().toString())){
@@ -227,20 +217,23 @@ public class ServiceProviderMainActivity extends AppCompatActivity {
                     return;
                 }
 
+                if(edtPhone.getText().toString().length() < 10){
+                    Snackbar.make(rootLayout , "phone number too short !!" , Snackbar.LENGTH_LONG).show();
+                    return;
+                }
+
                 //register new user
-                auth.createUserWithEmailAndPassword(edtEmail.getText().toString() , edtPassword.getText().toString()).addOnSuccessListener(new OnSuccessListener<AuthResult>() {
+                FirebaseAuth.getInstance().createUserWithEmailAndPassword(edtEmail.getText().toString() , edtPassword.getText().toString())
+                        .addOnSuccessListener(new OnSuccessListener<AuthResult>() {
                     @Override
                     public void onSuccess(AuthResult authResult) {
+
                         //save user to db
                         User user = new User();
                         user.setEmail(edtEmail.getText().toString());
                         user.setPassword(edtPassword.getText().toString());
                         user.setName(edtName.getText().toString());
                         user.setPhone(edtPhone.getText().toString());
-
-
-
-
 
                         FirebaseDatabase.getInstance().getReference().child("Users").child("ServiceProvider").child(FirebaseAuth.getInstance().getCurrentUser().getUid()).setValue(user).addOnSuccessListener(new OnSuccessListener<Void>() {
                             @Override
@@ -250,6 +243,9 @@ public class ServiceProviderMainActivity extends AppCompatActivity {
                             }
                         })
                                 .addOnFailureListener(new OnFailureListener() {
+                                    //cases this Failure will occur:
+                                    // 1- Email badly formatted
+                                    // 2- no internet connection
                                     @Override
                                     public void onFailure(@NonNull Exception e) {
                                         Snackbar.make(rootLayout , "failed" + e.getMessage() , Snackbar.LENGTH_LONG).show();
@@ -258,6 +254,8 @@ public class ServiceProviderMainActivity extends AppCompatActivity {
                     }
                 })
                         .addOnFailureListener(new OnFailureListener() {
+                            //cases this Failure will occur:
+                            //1- Email is already exist
                             @Override
                             public void onFailure(@NonNull Exception e) {
                                 Snackbar.make(rootLayout , "failed" + e.getMessage() , Snackbar.LENGTH_LONG).show();

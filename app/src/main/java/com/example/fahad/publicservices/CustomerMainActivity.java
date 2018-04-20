@@ -13,7 +13,6 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
-
 import com.example.fahad.publicservices.model.User;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
@@ -28,14 +27,12 @@ import com.rengwuxian.materialedittext.MaterialEditText;
 
 import dmax.dialog.SpotsDialog;
 
-//import dmax.dialog.SpotsDialog;
+
 
 public class CustomerMainActivity extends AppCompatActivity {
 
     Button btnSignIn , btnRegister;
     RelativeLayout rootLayout;
-    FirebaseAuth auth;
-    DatabaseReference Customer;
     TextView forgetPassword;
 
     @Override
@@ -49,27 +46,27 @@ public class CustomerMainActivity extends AppCompatActivity {
         rootLayout = (RelativeLayout)findViewById(R.id.rootLayout);
         forgetPassword = (TextView)findViewById(R.id.forgetPassword);
 
-        //init firebase
-        auth = FirebaseAuth.getInstance();
-        Customer = FirebaseDatabase.getInstance().getReference().child("Users").child("Customer");
+
+
 
 //-----------------------------------------------------------------------------------------
 
-        //Event
+
+        //Event on Register button clicked
         btnRegister.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 showRegisterDialog();
             }
         });
-
+        //Event on signin button clicked
         btnSignIn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 showSignInDialog();
             }
         });
-
+        //Event on forgetPassword button clicked
         forgetPassword.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -77,16 +74,18 @@ public class CustomerMainActivity extends AppCompatActivity {
             }
         });
 
-
     }
 
 
 //-----------------------------------------------------------------------------------------
 
     private void showSignInDialog() {
+        //this dialog will show in front of the main Activity
         AlertDialog.Builder dialog = new AlertDialog.Builder(this);
         dialog.setTitle("SIGN IN");
         dialog.setMessage("Please use Email to sign in");
+
+
         LayoutInflater inflater = LayoutInflater.from(this);
         View signin_layout = inflater.inflate(R.layout.layout_signin , null);
 
@@ -96,15 +95,9 @@ public class CustomerMainActivity extends AppCompatActivity {
         dialog.setView(signin_layout);
 
 
-        //set button
         dialog.setPositiveButton("SIGN IN", new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
-
-                dialog.dismiss();
-
-                //set disable sign in button if is processing
-
 
                 //check validation
                 if (TextUtils.isEmpty(edtEmail.getText().toString())) {
@@ -122,42 +115,49 @@ public class CustomerMainActivity extends AppCompatActivity {
                     return;
                 }
 
-                //wating dialog
+
+
+                //waiting dialog
                 final SpotsDialog waitingDialog = new SpotsDialog(CustomerMainActivity.this);
                 waitingDialog.show();
 
                 //signin
-                auth.signInWithEmailAndPassword(edtEmail.getText().toString(), edtPassword.getText().toString())
+                FirebaseAuth.getInstance().signInWithEmailAndPassword(edtEmail.getText().toString(), edtPassword.getText().toString())
                         .addOnSuccessListener(new OnSuccessListener<AuthResult>() {
                             @Override
                             public void onSuccess(AuthResult authResult) {
                                 waitingDialog.dismiss();
-                                String CustomerID = auth.getCurrentUser().getUid();
+                                String CustomerID = FirebaseAuth.getInstance().getCurrentUser().getUid();
                                 DatabaseReference CustomerRef = FirebaseDatabase.getInstance().getReference().child("Users").child("Customer").child(CustomerID);
                                 CustomerRef.addListenerForSingleValueEvent(new ValueEventListener() {
                                     @Override
                                     public void onDataChange(DataSnapshot dataSnapshot) {
                                         if(dataSnapshot.exists()){
+                                            //if the customer email and password found in customer database
                                             startActivity(new Intent(CustomerMainActivity.this, CustomerMenuPage.class));
                                             finish();
                                         }else {
+                                            //if the customer email and password not found in customer database
                                             Snackbar.make(rootLayout, "You are not Customer", Snackbar.LENGTH_LONG).show();
                                         }
                                     }
 
                                     @Override
                                     public void onCancelled(DatabaseError databaseError) {
-
                                     }
                                 });
 
                             }
                         })
                         .addOnFailureListener(new OnFailureListener() {
+                            //cases this Failure will occur:
+                            // 1- Email badly formatted
+                            // 2- Email not found
+                            // 3- no internet connection
                             @Override
                             public void onFailure(@NonNull Exception e) {
                                 waitingDialog.dismiss();
-                                Snackbar.make(rootLayout, "failed" + e.getMessage(), Snackbar.LENGTH_LONG).show();
+                                Snackbar.make(rootLayout, "failed " + e.getMessage(), Snackbar.LENGTH_LONG).show();
 
                             }
                         });
@@ -178,6 +178,7 @@ public class CustomerMainActivity extends AppCompatActivity {
         AlertDialog.Builder dialog = new AlertDialog.Builder(this);
         dialog.setTitle("REGISTER");
         dialog.setMessage("Please use Email to register");
+
         LayoutInflater inflater = LayoutInflater.from(this);
         View register_layout = inflater.inflate(R.layout.layout_register , null);
 
@@ -188,12 +189,9 @@ public class CustomerMainActivity extends AppCompatActivity {
 
         dialog.setView(register_layout);
 
-        //set button
         dialog.setPositiveButton("REGISTER", new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
-
-                dialog.dismiss();
 
                 //check validation
                 if(TextUtils.isEmpty(edtEmail.getText().toString())){
@@ -221,10 +219,17 @@ public class CustomerMainActivity extends AppCompatActivity {
                     return;
                 }
 
+                if(edtPhone.getText().toString().length() < 10){
+                    Snackbar.make(rootLayout , "phone number too short !!" , Snackbar.LENGTH_LONG).show();
+                    return;
+                }
+
                 //register new user
-                auth.createUserWithEmailAndPassword(edtEmail.getText().toString() , edtPassword.getText().toString()).addOnSuccessListener(new OnSuccessListener<AuthResult>() {
+                FirebaseAuth.getInstance().createUserWithEmailAndPassword(edtEmail.getText().toString(), edtPassword.getText().toString())
+                        .addOnSuccessListener(new OnSuccessListener<AuthResult>() {
                     @Override
                     public void onSuccess(AuthResult authResult) {
+
                         //save user to db
                         User user = new User();
                         user.setEmail(edtEmail.getText().toString());
@@ -232,25 +237,30 @@ public class CustomerMainActivity extends AppCompatActivity {
                         user.setName(edtName.getText().toString());
                         user.setPhone(edtPhone.getText().toString());
 
-
-                        Customer.child(FirebaseAuth.getInstance().getUid()).setValue(user).addOnSuccessListener(new OnSuccessListener<Void>() {
+                        FirebaseDatabase.getInstance().getReference().child("Users").child("Customer")
+                                .child(FirebaseAuth.getInstance().getUid()).setValue(user).addOnSuccessListener(new OnSuccessListener<Void>() {
                             @Override
                             public void onSuccess(Void aVoid) {
                                 Snackbar.make(rootLayout , "Register successfully" , Snackbar.LENGTH_LONG).show();
                             }
                         })
                                 .addOnFailureListener(new OnFailureListener() {
+                                    //cases this Failure will occur:
+                                    // 1- Email badly formatted
+                                    // 2- no internet connection
                                     @Override
                                     public void onFailure(@NonNull Exception e) {
-                                        Snackbar.make(rootLayout , "failed" + e.getMessage() , Snackbar.LENGTH_LONG).show();
+                                        Snackbar.make(rootLayout , "failed " + e.getMessage() , Snackbar.LENGTH_LONG).show();
                                     }
                                 });
                     }
                 })
                         .addOnFailureListener(new OnFailureListener() {
+                            //cases this Failure will occur:
+                            //1- Email is already exist
                             @Override
                             public void onFailure(@NonNull Exception e) {
-                                Snackbar.make(rootLayout , "failed" + e.getMessage() , Snackbar.LENGTH_LONG).show();
+                                Snackbar.make(rootLayout , "failed " + e.getMessage() , Snackbar.LENGTH_LONG).show();
                             }
                         });
 

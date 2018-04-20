@@ -35,6 +35,7 @@ public class ServiceProviderMenuPage extends AppCompatActivity {
         Log_Out = (Button) findViewById(R.id.Log_Out);
         RatingBar = (RatingBar) findViewById(R.id.ratingBar);
 
+        //================================================================================
 
         Edit_Profile.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -99,18 +100,17 @@ public class ServiceProviderMenuPage extends AppCompatActivity {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
                 if (dataSnapshot.exists() && dataSnapshot.getChildrenCount()>0){
-                    //if alredy name same in db
-                    Map<String , Object> map=(Map<String , Object>)dataSnapshot.getValue();
-                    int ratingSum = 0 ;
+                    int ratingSum = 0;
                     float ratingsTotal = 0;
-                    float ratingAvg = 0;
+                    float ratingAvg;
                     for (DataSnapshot child : dataSnapshot.child("rating").getChildren()){
-                        ratingSum = ratingSum+Integer.valueOf(child.getValue().toString());
+                        ratingSum = ratingSum + Integer.valueOf(child.getValue().toString());
                         ratingsTotal++;
                     }
-                    // avg
+
+                    // average
                     if (ratingsTotal != 0){
-                        ratingAvg = ratingSum /ratingsTotal;
+                        ratingAvg = ratingSum / ratingsTotal;
                         RatingBar.setRating(ratingAvg);
                     }
                 }

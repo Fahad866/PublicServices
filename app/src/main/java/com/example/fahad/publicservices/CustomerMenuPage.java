@@ -12,7 +12,6 @@ public class CustomerMenuPage extends AppCompatActivity {
 
     Button Log_Out, Contact_Us, Edit_Profile, Request_Services , Previous_Request_Customer;
 
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -23,6 +22,9 @@ public class CustomerMenuPage extends AppCompatActivity {
         Edit_Profile = (Button) findViewById(R.id.Edit_Profile);
         Contact_Us = (Button) findViewById(R.id.Contact_Us);
         Log_Out = (Button) findViewById(R.id.Log_Out);
+
+
+        //================================================================================
 
         Edit_Profile.setOnClickListener(new View.OnClickListener() {
             @Override

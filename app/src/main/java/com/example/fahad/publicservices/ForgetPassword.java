@@ -19,7 +19,6 @@ public class ForgetPassword extends AppCompatActivity {
 
     EditText email;
     Button resetPassword;
-    FirebaseAuth firebaseAuth;
     LinearLayout ForgetPasswordLayout;
 
     @Override
@@ -30,17 +29,15 @@ public class ForgetPassword extends AppCompatActivity {
         email = (EditText)findViewById(R.id.email);
         resetPassword = (Button)findViewById(R.id.resetPassword);
         ForgetPasswordLayout = (LinearLayout)findViewById(R.id.ForgetPasswordLayout);
-        firebaseAuth = FirebaseAuth.getInstance();
 
         resetPassword.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 String CustomerEmail = email.getText().toString().trim();
-
                 if(CustomerEmail.equals("")){
                     Snackbar.make(ForgetPasswordLayout , "Please Enter Email " , Snackbar.LENGTH_LONG ).show();
                 }else {
-                    firebaseAuth.sendPasswordResetEmail(CustomerEmail).addOnCompleteListener(new OnCompleteListener<Void>() {
+                    FirebaseAuth.getInstance().sendPasswordResetEmail(CustomerEmail).addOnCompleteListener(new OnCompleteListener<Void>() {
                         @Override
                         public void onComplete(@NonNull Task<Void> task) {
                             if(task.isSuccessful()){

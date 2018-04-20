@@ -11,6 +11,7 @@ public class MainActivity extends AppCompatActivity {
     Button btnCustomer , btnServiceProvider;
 
 
+    //first method will be start when the activity open
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -19,6 +20,7 @@ public class MainActivity extends AppCompatActivity {
         btnCustomer = (Button)findViewById(R.id.btnUser);
         btnServiceProvider = (Button)findViewById(R.id.btnServiceProvider);
 
+        //when the app start it will call this startService
         startService(new Intent(MainActivity.this , KillApp.class));
 
 

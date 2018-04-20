@@ -11,10 +11,7 @@ import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.ImageView;
-
 import com.bumptech.glide.Glide;
-import com.example.fahad.publicservices.model.User;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.auth.FirebaseAuth;
@@ -26,7 +23,6 @@ import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
-
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.util.HashMap;
@@ -41,11 +37,9 @@ public class EditProfile extends AppCompatActivity {
     CircleImageView image;
     private Uri resultUri ;
     private String  Phone , Name , ProfileUrl;
-
     private String accountType ;
-    private FirebaseAuth Athu;
     private DatabaseReference CustomerDatabase;
-    private String CustomerID ;
+    private String ID ;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -54,9 +48,9 @@ public class EditProfile extends AppCompatActivity {
 
         edtName = (EditText)findViewById(R.id.edtName);
         edtPhone = (EditText)findViewById(R.id.edtPhone);
-
         image = (CircleImageView)findViewById(R.id.image);
         btnSubmit = (Button)findViewById(R.id.btnSubmit);
+
         accountType = getIntent().getStringExtra("accountType");
 
         if(accountType.equals("Customer")){
@@ -65,22 +59,20 @@ public class EditProfile extends AppCompatActivity {
         }
 
         //init firebase
-        Athu = FirebaseAuth.getInstance();
-        CustomerID= Athu.getCurrentUser().getUid();
-        CustomerDatabase= FirebaseDatabase.getInstance().getReference().child("Users").child(accountType).child(CustomerID);
+        ID = FirebaseAuth.getInstance().getCurrentUser().getUid();
+        CustomerDatabase = FirebaseDatabase.getInstance().getReference().child("Users").child(accountType).child(ID);
 
         getCustomerInfo();
 
         image.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent = new Intent(Intent.ACTION_PICK);//GO GALLARY
+                Intent intent = new Intent(Intent.ACTION_PICK); //GO GALLERY
                 intent.setType("image/*");// the type for image
                 startActivityForResult(intent,1);
             }
         });
 
-        getCustomerInfo();
         btnSubmit.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -88,8 +80,9 @@ public class EditProfile extends AppCompatActivity {
             }
         });
 
-
     }
+
+    //----------------------------------------------------------------------------------------------
 
     private void getCustomerInfo() {
 
@@ -97,20 +90,18 @@ public class EditProfile extends AppCompatActivity {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
                 if (dataSnapshot.exists() && dataSnapshot.getChildrenCount()>0){
-                    //if alredy name same in db
                     Map<String , Object> map=(Map<String , Object>)dataSnapshot.getValue();
-                    //if any an correct plase cheke name db
 
-                    if (map.get("name")!=null){
-                        Name=map.get("name").toString();
+                    if (map.get("name")!= null){
+                        Name = map.get("name").toString();
                         edtName.setText(Name);
                     }
-                    if (map.get("phone")!=null) {
+                    if (map.get("phone")!= null) {
                         Phone = map.get("phone").toString();
                         edtPhone.setText(Phone);
                     }
 
-                    if (map.get("profileImageUrl")!=null){
+                    if (map.get("profileImageUrl")!= null){
                         ProfileUrl = map.get("profileImageUrl").toString();
                         Glide.with(getApplication()).load(ProfileUrl).into(image);
                     }
@@ -124,6 +115,8 @@ public class EditProfile extends AppCompatActivity {
         });
     }
 
+    //----------------------------------------------------------------------------------------------
+
     private void saveCustomerInfo() {
 
         Name = edtName.getText().toString();
@@ -135,8 +128,9 @@ public class EditProfile extends AppCompatActivity {
 
         CustomerDatabase.updateChildren(CustomerInfo);
 
-        if (resultUri!=null){//save image in db
-            StorageReference filePath = FirebaseStorage.getInstance().getReference().child("Profile_Image ").child(CustomerID);
+        //save image in db
+        if (resultUri!=null){
+            StorageReference filePath = FirebaseStorage.getInstance().getReference().child("Profile_Image ").child(ID);
             Bitmap bitmap=null;
             try {
                 bitmap = MediaStore.Images.Media.getBitmap(getApplication().getContentResolver(),resultUri);
@@ -163,7 +157,6 @@ public class EditProfile extends AppCompatActivity {
                     Map newImage = new HashMap();
                     newImage.put("profileImageUrl",downloadUrl.toString());
                     CustomerDatabase.updateChildren(newImage);
-
                     finish();
                     return;
                 }
@@ -174,7 +167,10 @@ public class EditProfile extends AppCompatActivity {
         }
     }
 
-    @Override//for image view for user
+    //----------------------------------------------------------------------------------------------
+
+    //for viewing the new image
+    @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         if (requestCode ==1 && resultCode == Activity.RESULT_OK){

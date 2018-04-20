@@ -19,13 +19,11 @@ public class KillApp extends Service {
     }
 
     @Override
-    public void onTaskRemoved(Intent rootIntent) {//when remove app
+    public void onTaskRemoved(Intent rootIntent) { //when remove app
         super.onTaskRemoved(rootIntent);
 
-        String userId = FirebaseAuth.getInstance().getCurrentUser().getUid();//like disconnectService
-        DatabaseReference ref = FirebaseDatabase.getInstance().getReference("ServicesProvidersAvailable");
-        GeoFire geoFire = new GeoFire(ref);
-        geoFire.removeLocation(userId);
+        ServiceProviderMapsActivity c = new ServiceProviderMapsActivity();
+        c.kill();
     }
 }
 

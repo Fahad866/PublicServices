@@ -2,6 +2,8 @@ package com.example.fahad.publicservices;
 
 import android.*;
 import android.Manifest;
+import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.location.Location;
@@ -13,12 +15,17 @@ import com.directions.route.RouteException;
 import com.directions.route.Routing;
 import com.directions.route.RoutingListener;
 import com.google.android.gms.location.LocationListener;
+
+import android.location.LocationManager;
+import android.net.ConnectivityManager;
+import android.provider.Settings;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.FragmentActivity;
 import android.os.Bundle;
+import android.support.v7.app.AlertDialog;
 import android.telephony.SmsMessage;
 import android.view.View;
 import android.widget.Button;
@@ -90,14 +97,11 @@ public class ServiceProviderMapsActivity extends FragmentActivity implements OnM
         setContentView(R.layout.activity_service_provider_maps);
         // Obtain the SupportMapFragment and get notified when the map is ready to be used.
         polylines = new ArrayList<>();
-        mapFragment = (SupportMapFragment) getSupportFragmentManager()
-                .findFragmentById(R.id.map);
-        if (ActivityCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-            ActivityCompat.requestPermissions(ServiceProviderMapsActivity.this,new String[]{android.Manifest.permission.ACCESS_FINE_LOCATION},LOCATION_REQUEST_CODE);
-        }else {
-            mapFragment.getMapAsync(this); //start map
-        }
+        mapFragment = (SupportMapFragment) getSupportFragmentManager().findFragmentById(R.id.map);
+        mapFragment.getMapAsync(this); //start map
 
+        CheckingLocationConnection();
+        CheckingInternetConnection();
 
 
         CustomerInfo = (LinearLayout)findViewById(R.id.userinfo);
@@ -127,7 +131,6 @@ public class ServiceProviderMapsActivity extends FragmentActivity implements OnM
             @Override
             public void onClick(View view) {
                 recordedWork();
-                endWork();
                 payment.setVisibility(View.VISIBLE);
             }
         });
@@ -160,18 +163,65 @@ public class ServiceProviderMapsActivity extends FragmentActivity implements OnM
         getAssignedCustomer();
     }
 
+
+    public void CheckingLocationConnection() {
+        String title = "GPS not found";
+        String message = "Click Setting and enable GPS";
+        LocationManager locationManager;
+        locationManager = (LocationManager) this.getSystemService(Context.LOCATION_SERVICE);
+
+        if (!locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER)) {
+            AlertDialog.Builder builder = new AlertDialog.Builder(this);
+            builder.setTitle(title);
+            builder.setMessage(message);
+            builder.setPositiveButton("Setting", new DialogInterface.OnClickListener() {
+                public void onClick(DialogInterface dialogInterface, int i) {
+                    startActivity(new Intent(android.provider.Settings.ACTION_LOCATION_SOURCE_SETTINGS));
+                    mapFragment.getMapAsync(ServiceProviderMapsActivity.this); //start map
+                }
+            });
+            builder.setNegativeButton("Cancel", null);
+            builder.create().show();
+        }
+
+    }
+
+    public void CheckingInternetConnection() {
+        String title = "internet not found";
+        String message = "Click Setting and enable internet";
+        ConnectivityManager connectivityManager;
+        connectivityManager = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
+
+        if (connectivityManager.getActiveNetworkInfo() == null) {
+            AlertDialog.Builder builder = new AlertDialog.Builder(this);
+            builder.setTitle(title);
+            builder.setMessage(message);
+            builder.setPositiveButton("Setting", new DialogInterface.OnClickListener() {
+                public void onClick(DialogInterface dialogInterface, int i) {
+                    startActivity(new Intent(Settings.ACTION_WIFI_SETTINGS));
+                }
+            });
+            builder.setNegativeButton("Cancel", null);
+            builder.create().show();
+        }
+    }
+
+
     private void setPrice() {
         DatabaseReference historyRideInfoDb = FirebaseDatabase.getInstance().getReference().child("history").child(requestId);
         Price = edtPrice.getText().toString();
         Map CustomerInfo = new HashMap();
         CustomerInfo.put("price", Price);
 
-        if(Price.toString().equals("0")){
+        if(Price.toString().equals("0") || Price.toString().equals("")){
             Toast.makeText(ServiceProviderMapsActivity.this , "Please add price" , Toast.LENGTH_SHORT).show();
         }else{
             payment.setVisibility(View.GONE);
+            endWork();
+            edtPrice.setText("");
         }
-        historyRideInfoDb.updateChildren(CustomerInfo);
+        historyRideInfoDb.updateChildren(CustomerInfo); //****************************
+
     }
 
 
@@ -235,8 +285,9 @@ public class ServiceProviderMapsActivity extends FragmentActivity implements OnM
             @Override
             public void onCancelled(DatabaseError databaseError) {
             }});}
-    ///
-    private  void endWork(){
+
+
+    public   void endWork(){
         erasePolylines();
 
         String CustomerId = FirebaseAuth.getInstance().getCurrentUser().getUid();
@@ -281,11 +332,11 @@ public class ServiceProviderMapsActivity extends FragmentActivity implements OnM
         map.put("timestamp", getCurrenTimestamp());
         historyRef.child(requestId).updateChildren(map);
     }
-        private Long getCurrenTimestamp() { //long becuse a number
-            Long timestamp = System.currentTimeMillis()/1000;
-            return timestamp;
+    private Long getCurrenTimestamp() { //long becuse a number
+        Long timestamp = System.currentTimeMillis()/1000;
+        return timestamp;
 
-        }
+    }
 
 
 
@@ -477,18 +528,36 @@ public class ServiceProviderMapsActivity extends FragmentActivity implements OnM
 
     @Override
     public void onBackPressed() {
-        if(CustomerID != ""){
+        if(CustomerID.equals("")) {
+            super.onBackPressed();
+        }else if(CustomerID != "") {
             Toast.makeText(ServiceProviderMapsActivity.this , "wait until the order is finished" , Toast.LENGTH_LONG).show();
-        }else if(Price.toString().equals("0")){
-            Toast.makeText(ServiceProviderMapsActivity.this , "Please add price" , Toast.LENGTH_LONG).show();
+        }else if(Price.toString().equals("0") || Price.toString() == ""){
+            Toast.makeText(ServiceProviderMapsActivity.this , " add price" , Toast.LENGTH_LONG).show();
         }else{
             super.onBackPressed();
         }
     }
 
-    @Override
-    protected void onDestroy() {
-        super.onDestroy();
-        endWork();
+
+    public void kill(){
+        String CustomerId = FirebaseAuth.getInstance().getCurrentUser().getUid();
+        DatabaseReference ServiceProviderRef = FirebaseDatabase.getInstance().getReference().child("Users").child("ServiceProvider").child(CustomerId).child("CustomerRequest");
+        ServiceProviderRef.removeValue();
+
+
+        DatabaseReference ref = FirebaseDatabase.getInstance().getReference("CustomerRequest");
+        GeoFire geoFire = new GeoFire(ref);
+        geoFire.removeLocation(CustomerID);
+        CustomerID = "";
+
+        if(CustomerLocationMarker != null){
+            CustomerLocationMarker.remove();
+        }
+        if (CustomerLocationRefListener != null){
+            CustomerLocationRef.removeEventListener(CustomerLocationRefListener);
+        }
     }
-}
+
+    }
+

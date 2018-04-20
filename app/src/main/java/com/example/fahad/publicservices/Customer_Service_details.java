@@ -1,31 +1,29 @@
 package com.example.fahad.publicservices;
 
 import android.app.Activity;
+import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Bitmap;
+import android.net.ConnectivityManager;
 import android.net.Uri;
 import android.provider.MediaStore;
+import android.provider.Settings;
 import android.support.annotation.NonNull;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.ImageView;
-
-import com.bumptech.glide.Glide;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.database.DataSnapshot;
-import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
-import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
-
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.util.HashMap;
@@ -37,7 +35,6 @@ public class Customer_Service_details extends AppCompatActivity {
     private EditText mTexeProblem;
     private CircleImageView mImageProblem;
     private Button btnConfirm;
-    private FirebaseAuth mAthu;
     private DatabaseReference mCustomerDatabase;
     private String CustomerID;
     private String TextProblem;
@@ -48,13 +45,14 @@ public class Customer_Service_details extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.customer_service_details);
 
+        CheckingInternetConnection();
+
         mTexeProblem = (EditText)findViewById(R.id.TextProblem);
         mImageProblem = (CircleImageView)findViewById(R.id.imageProblem) ;
         btnConfirm = (Button)findViewById(R.id.Confirm);
 
 
-        mAthu = FirebaseAuth.getInstance();
-        CustomerID= mAthu.getCurrentUser().getUid();
+        CustomerID= FirebaseAuth.getInstance().getCurrentUser().getUid();
         mCustomerDatabase= FirebaseDatabase.getInstance().getReference().child("Users").child("Customer").child(CustomerID);
 
         if(mCustomerDatabase.child("TextProblem") != null){
@@ -68,12 +66,12 @@ public class Customer_Service_details extends AppCompatActivity {
         mImageProblem.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Intent intent = new Intent(Intent.ACTION_PICK);//GO GALLARY
+                Intent intent = new Intent(Intent.ACTION_PICK); //GO GALLERY
                 intent.setType("image/*");// the type for image
                 startActivityForResult(intent,1);
-
             }
         });
+
         btnConfirm.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -88,6 +86,27 @@ public class Customer_Service_details extends AppCompatActivity {
 
     }
 
+    public void CheckingInternetConnection(){
+        String title = "internet not found";
+        String message = "Click Setting and enable internet";
+        ConnectivityManager connectivityManager;
+        connectivityManager = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
+
+
+        if( connectivityManager.getActiveNetworkInfo() == null ) {
+            AlertDialog.Builder builder = new AlertDialog.Builder(this);
+            builder.setTitle(title);
+            builder.setMessage(message);
+            builder.setPositiveButton("Setting", new DialogInterface.OnClickListener() {
+                public void onClick(DialogInterface dialogInterface, int i) {
+                    startActivity(new Intent(Settings.ACTION_WIFI_SETTINGS));
+                }
+            });
+            builder.setNegativeButton("Cancel", null);
+            builder.create().show();
+        }
+    }
+
 
     //save to db
     private void saveCustomerInfo() {
@@ -98,9 +117,9 @@ public class Customer_Service_details extends AppCompatActivity {
             CustomerInfo.put("TextProblem",TextProblem);
 
         mCustomerDatabase.updateChildren(CustomerInfo);
-        if (resultUri!=null){//save image in db
+        if (resultUri != null){//save image in db
             StorageReference filePath = FirebaseStorage.getInstance().getReference().child("Image Problem").child(CustomerID);//like dbrefrence
-            Bitmap bitmap=null;
+            Bitmap bitmap = null;
             try {
                 bitmap = MediaStore.Images.Media.getBitmap(getApplication().getContentResolver(),resultUri);
             } catch (IOException e) {
