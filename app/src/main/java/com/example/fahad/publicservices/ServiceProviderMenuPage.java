@@ -52,7 +52,6 @@ public class ServiceProviderMenuPage extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 Intent intent = new Intent(ServiceProviderMenuPage.this, historyServiceProvider.class);
-                intent.putExtra("CustomerOrServiceProvider", "ServiceProvider");
                 startActivity(intent);
             }
         });

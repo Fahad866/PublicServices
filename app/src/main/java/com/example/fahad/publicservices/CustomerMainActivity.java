@@ -14,10 +14,15 @@ import android.widget.Button;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 import com.example.fahad.publicservices.model.User;
+import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseAuthInvalidCredentialsException;
+import com.google.firebase.auth.FirebaseAuthInvalidUserException;
+import com.google.firebase.auth.FirebaseAuthUserCollisionException;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -123,44 +128,51 @@ public class CustomerMainActivity extends AppCompatActivity {
 
                 //signin
                 FirebaseAuth.getInstance().signInWithEmailAndPassword(edtEmail.getText().toString(), edtPassword.getText().toString())
-                        .addOnSuccessListener(new OnSuccessListener<AuthResult>() {
-                            @Override
-                            public void onSuccess(AuthResult authResult) {
-                                waitingDialog.dismiss();
-                                String CustomerID = FirebaseAuth.getInstance().getCurrentUser().getUid();
-                                DatabaseReference CustomerRef = FirebaseDatabase.getInstance().getReference().child("Users").child("Customer").child(CustomerID);
-                                CustomerRef.addListenerForSingleValueEvent(new ValueEventListener() {
-                                    @Override
-                                    public void onDataChange(DataSnapshot dataSnapshot) {
-                                        if(dataSnapshot.exists()){
-                                            //if the customer email and password found in customer database
-                                            startActivity(new Intent(CustomerMainActivity.this, CustomerMenuPage.class));
-                                            finish();
-                                        }else {
-                                            //if the customer email and password not found in customer database
-                                            Snackbar.make(rootLayout, "You are not Customer", Snackbar.LENGTH_LONG).show();
-                                        }
-                                    }
+                       .addOnCompleteListener(new OnCompleteListener<AuthResult>() {
+                           @Override
+                           public void onComplete(@NonNull Task<AuthResult> task) {
+                               if(task.isSuccessful()){
+                                   waitingDialog.dismiss();
+                                   String CustomerID = FirebaseAuth.getInstance().getCurrentUser().getUid();
+                                   DatabaseReference CustomerRef = FirebaseDatabase.getInstance().getReference().child("Users").child("Customer").child(CustomerID);
+                                   CustomerRef.addListenerForSingleValueEvent(new ValueEventListener() {
+                                       @Override
+                                       public void onDataChange(DataSnapshot dataSnapshot) {
+                                           if (dataSnapshot.exists()) {
+                                               //if the customer email and password found in customer database
+                                               startActivity(new Intent(CustomerMainActivity.this, CustomerMenuPage.class));
+                                               finish();
+                                           } else {
+                                               //if the customer email and password not found in customer database
+                                               Snackbar.make(rootLayout, "You are not Customer", Snackbar.LENGTH_LONG).show();
+                                           }
+                                       }
 
-                                    @Override
-                                    public void onCancelled(DatabaseError databaseError) {
-                                    }
-                                });
+                                       @Override
+                                       public void onCancelled(DatabaseError databaseError) {
 
-                            }
-                        })
-                        .addOnFailureListener(new OnFailureListener() {
-                            //cases this Failure will occur:
-                            // 1- Email badly formatted
-                            // 2- Email not found
-                            // 3- no internet connection
-                            @Override
-                            public void onFailure(@NonNull Exception e) {
-                                waitingDialog.dismiss();
-                                Snackbar.make(rootLayout, "failed " + e.getMessage(), Snackbar.LENGTH_LONG).show();
+                                       }
+                                   });
+
+                       }else {
+                                   try {
+                                       throw task.getException();
+                                   }catch (FirebaseAuthInvalidCredentialsException e){
+                                       waitingDialog.dismiss();
+                                       Snackbar.make(rootLayout, "Please enter correct email", Snackbar.LENGTH_LONG).show();
+                                   } catch(Exception e) {
+                                       waitingDialog.dismiss();
+                                       Snackbar.make(rootLayout, "failed " + e.getMessage(), Snackbar.LENGTH_LONG).show();
+                                   }
+                               }
+
+
+
+
 
                             }
                         });
+
             }
         }).setNegativeButton("CANCEL", new DialogInterface.OnClickListener() {
             @Override
@@ -227,39 +239,40 @@ public class CustomerMainActivity extends AppCompatActivity {
                 //register new user
                 FirebaseAuth.getInstance().createUserWithEmailAndPassword(edtEmail.getText().toString(), edtPassword.getText().toString())
                         .addOnSuccessListener(new OnSuccessListener<AuthResult>() {
-                    @Override
-                    public void onSuccess(AuthResult authResult) {
-
-                        //save user to db
-                        User user = new User();
-                        user.setEmail(edtEmail.getText().toString());
-                        user.setPassword(edtPassword.getText().toString());
-                        user.setName(edtName.getText().toString());
-                        user.setPhone(edtPhone.getText().toString());
-
-                        FirebaseDatabase.getInstance().getReference().child("Users").child("Customer")
-                                .child(FirebaseAuth.getInstance().getUid()).setValue(user).addOnSuccessListener(new OnSuccessListener<Void>() {
                             @Override
-                            public void onSuccess(Void aVoid) {
-                                Snackbar.make(rootLayout , "Register successfully" , Snackbar.LENGTH_LONG).show();
+                            public void onSuccess(AuthResult authResult) {
+
+                                //save user to db
+                                User user = new User();
+                                user.setEmail(edtEmail.getText().toString());
+                                user.setPassword(edtPassword.getText().toString());
+                                user.setName(edtName.getText().toString());
+                                user.setPhone(edtPhone.getText().toString());
+
+                                FirebaseDatabase.getInstance().getReference().child("Users").child("Customer")
+                                        .child(FirebaseAuth.getInstance().getUid()).setValue(user).addOnSuccessListener(new OnSuccessListener<Void>() {
+                                    @Override
+                                    public void onSuccess(Void aVoid) {
+                                        Snackbar.make(rootLayout , "Register successfully" , Snackbar.LENGTH_LONG).show();
+                                    }
+                                })
+                                        .addOnFailureListener(new OnFailureListener() {
+                                            //cases this Failure will occur:
+                                            // 1- Email badly formatted
+                                            // 2- no internet connection
+                                            @Override
+                                            public void onFailure(@NonNull Exception e) {
+                                                Snackbar.make(rootLayout , "failed " + e.getMessage() , Snackbar.LENGTH_LONG).show();
+                                            }
+                                        });
                             }
                         })
-                                .addOnFailureListener(new OnFailureListener() {
-                                    //cases this Failure will occur:
-                                    // 1- Email badly formatted
-                                    // 2- no internet connection
-                                    @Override
-                                    public void onFailure(@NonNull Exception e) {
-                                        Snackbar.make(rootLayout , "failed " + e.getMessage() , Snackbar.LENGTH_LONG).show();
-                                    }
-                                });
-                    }
-                })
                         .addOnFailureListener(new OnFailureListener() {
                             //cases this Failure will occur:
                             //1- Email is already exist
                             @Override
                             public void onFailure(@NonNull Exception e) {
+
                                 Snackbar.make(rootLayout , "failed " + e.getMessage() , Snackbar.LENGTH_LONG).show();
                             }
                         });

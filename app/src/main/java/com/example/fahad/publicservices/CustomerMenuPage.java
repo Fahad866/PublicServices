@@ -41,7 +41,6 @@ public class CustomerMenuPage extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 Intent intent = new Intent(CustomerMenuPage.this , historyCustomer.class);
-                intent.putExtra("CustomerOrServiceProvider","Customer");
                 startActivity(intent);
             }
         });

@@ -27,7 +27,7 @@ import java.util.Locale;
 import java.util.Map;
 
 public class HistoryCustomerSingle extends AppCompatActivity {
-    private String RequestId , CurrentCustomerId , CustomerID , ServiceProviderId , CustomerOrServiceProvider;
+    private String RequestId  , ServiceProviderId ;
     private TextView date;
     private TextView CustomerPhone;
     private TextView CustomerName;
@@ -42,18 +42,17 @@ public class HistoryCustomerSingle extends AppCompatActivity {
 
         CheckingInternetConnection();
 
-        CustomerProblemImage  = (ImageView) findViewById(R.id.imagePr);
+        CustomerProblemImage = (ImageView) findViewById(R.id.imagePr);
         date = (TextView) findViewById(R.id.date);
         CustomerPhone = (TextView) findViewById(R.id.userphone);
         CustomerName = (TextView) findViewById(R.id.username);
         Price = (TextView) findViewById(R.id.price);
         ratingBar = (RatingBar) findViewById(R.id.ratingBar) ;
 
-        CurrentCustomerId = FirebaseAuth.getInstance().getCurrentUser().getUid();
         RequestId = getIntent().getExtras().getString("RequestId");
         historyRequestInfoDb = FirebaseDatabase.getInstance().getReference().child("history").child(RequestId);
         getRequestInfo();
-        getCustomerInfo();
+        getPrice();
     }
 
     public void CheckingInternetConnection() {
@@ -82,20 +81,11 @@ public class HistoryCustomerSingle extends AppCompatActivity {
             public void onDataChange(DataSnapshot dataSnapshot) {
                 if (dataSnapshot.exists()){
                     for (DataSnapshot child : dataSnapshot.getChildren()){
-                        if (child.getKey().equals("Customer")){
-                            CustomerID = child.getValue().toString();
-                            if (!CustomerID.equals(CurrentCustomerId)){
-                                CustomerOrServiceProvider = "ServiceProvider";
-                                getCustomerInf("Customer",CustomerID);
-                            }
-                        }
                         if (child.getKey().equals("ServiceProvider")){
                             ServiceProviderId = child.getValue().toString();
-                            if (!ServiceProviderId.equals(CurrentCustomerId)){
-                                CustomerOrServiceProvider = "Customer";
-                                getCustomerInf("ServiceProvider",ServiceProviderId);
+                                getServiceProviderInfo(ServiceProviderId);
                                 displayCustomerRelatedObject();
-                            }
+
                         }
 
                         if (child.getKey().equals("timestamp")){
@@ -112,12 +102,9 @@ public class HistoryCustomerSingle extends AppCompatActivity {
             }
 
             private String getDate(Long timestamp) {
-                Calendar cal = Calendar.getInstance(Locale.getDefault());//calender get instsnce//local location of user
+                Calendar cal = Calendar.getInstance(Locale.getDefault());
                 cal.setTimeInMillis(timestamp*1000);
-                String date = DateFormat.format("dd-MM-yyyy hh:mm" ,cal).toString();//arrange the time like yy-dd-mm
-
-
-
+                String date = DateFormat.format("dd-MM-yyyy hh:mm" ,cal).toString();
                 return date;
             }
             @Override
@@ -139,8 +126,8 @@ public class HistoryCustomerSingle extends AppCompatActivity {
         });
     }
 
-    private void getCustomerInf(String CustomerOrServiceProvider, String otherCustomerId) {
-        DatabaseReference CustomerDb = FirebaseDatabase.getInstance().getReference().child("Users").child(CustomerOrServiceProvider).child(otherCustomerId);
+    private void getServiceProviderInfo(String otherCustomerId) {
+        DatabaseReference CustomerDb = FirebaseDatabase.getInstance().getReference().child("Users").child("ServiceProvider").child(otherCustomerId);
         CustomerDb.addListenerForSingleValueEvent(new ValueEventListener(){
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
@@ -157,8 +144,6 @@ public class HistoryCustomerSingle extends AppCompatActivity {
                         Glide.with(getApplication()).load(map.get("profileImageUrl").toString()).into(CustomerProblemImage);
                     }
                 }
-
-
             }
 
             @Override
@@ -167,7 +152,7 @@ public class HistoryCustomerSingle extends AppCompatActivity {
             }
         });
     }
-    private void getCustomerInfo(){
+    private void getPrice(){
         historyRequestInfoDb.addListenerForSingleValueEvent(new ValueEventListener(){
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
@@ -176,11 +161,9 @@ public class HistoryCustomerSingle extends AppCompatActivity {
                     if (map.get("price")!=null){
                         Price.setText(map.get("price").toString());
                     }
-
                 }
-
-
             }
+
 
             @Override
             public void onCancelled(DatabaseError databaseError) {

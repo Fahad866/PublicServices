@@ -1,11 +1,9 @@
 package com.example.fahad.publicservices;
 
-import android.*;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
-import android.graphics.Color;
 import android.location.Location;
 import android.location.LocationManager;
 import android.net.ConnectivityManager;
@@ -17,17 +15,14 @@ import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.FragmentActivity;
 import android.os.Bundle;
 import android.support.v7.app.AlertDialog;
-import android.util.Log;
 import android.view.View;
 import android.widget.Button;
-import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
 import android.widget.RatingBar;
 import android.widget.TextView;
 import android.widget.Toast;
-
 import com.bumptech.glide.Glide;
 import com.firebase.geofire.GeoFire;
 import com.firebase.geofire.GeoLocation;
@@ -35,12 +30,8 @@ import com.firebase.geofire.GeoQuery;
 import com.firebase.geofire.GeoQueryEventListener;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
-import com.google.android.gms.common.api.Status;
 import com.google.android.gms.location.LocationRequest;
 import com.google.android.gms.location.LocationServices;
-import com.google.android.gms.location.places.Place;
-import com.google.android.gms.location.places.ui.PlaceAutocompleteFragment;
-import com.google.android.gms.location.places.ui.PlaceSelectionListener;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
@@ -56,8 +47,6 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 import com.jcminarro.roundkornerlayout.RoundKornerLinearLayout;
-
-import java.text.ParseException;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -83,7 +72,6 @@ public class CustomerMapsActivity extends FragmentActivity implements OnMapReady
     private RadioGroup mRadioGroup;
     private Button btn_gotIt , btn_cancel ;
     private TextView RequestStatus;
-
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -162,7 +150,7 @@ public class CustomerMapsActivity extends FragmentActivity implements OnMapReady
                 String userId = FirebaseAuth.getInstance().getCurrentUser().getUid();
                 DatabaseReference ref = FirebaseDatabase.getInstance().getReference("CustomerRequest");
 
-
+                //save location to database
                 GeoFire geoFire = new GeoFire(ref);
                 geoFire.setLocation(userId, new GeoLocation(mLastLocation.getLatitude(), mLastLocation.getLongitude()));
 
@@ -177,7 +165,6 @@ public class CustomerMapsActivity extends FragmentActivity implements OnMapReady
         }
         );
     }
-
 
     public void CheckingLocationConnection() {
         String title = "GPS not found";
@@ -244,17 +231,18 @@ public class CustomerMapsActivity extends FragmentActivity implements OnMapReady
                         public void onDataChange(DataSnapshot dataSnapshot) {
                             if (dataSnapshot.exists() && dataSnapshot.getChildrenCount()>0){
                                 Map<String , Object> ServiceMap=(Map<String , Object>)dataSnapshot.getValue();
-                                //if any an correct plase cheke name db
-                                if (ServiceProviderFound){return;}
+                                if (ServiceProviderFound){
+                                    return;
+                                }
                                 if (ServiceMap.get("service").equals(Service)){
                                     ServiceProviderFound = true;
                                     ServiceProviderFoundID = dataSnapshot.getKey();
                                     DatabaseReference ServiceProviderRef = FirebaseDatabase.getInstance().getReference().child("Users").child("ServiceProvider").child(ServiceProviderFoundID).child("CustomerRequest");
-                                    //userID --- customerID
                                     String CustomerID = FirebaseAuth.getInstance().getCurrentUser().getUid();
                                     HashMap map = new HashMap();
-                                    map.put("CustomerRequestID",CustomerID); //*********************************
+                                    map.put("CustomerRequestID",CustomerID);
                                     ServiceProviderRef.updateChildren(map);
+
                                     getServiceProviderLocation();
                                     getServiceProviderInfo();
                                     WorkEnded();
@@ -310,7 +298,6 @@ public class CustomerMapsActivity extends FragmentActivity implements OnMapReady
                     double locationLat = 0;
                     double locationLng = 0;
 
-
                     RequestStatus.setText("Service Provider Found");
 
                     if(map.get(0) != null){
@@ -332,16 +319,13 @@ public class CustomerMapsActivity extends FragmentActivity implements OnMapReady
                     Location loc2 = new Location("");
                     loc2.setLatitude(ServiceProviderLatLng.latitude);
                     loc2.setLongitude(ServiceProviderLatLng.longitude);
+
                     float distance = loc1.distanceTo(loc2);
-
-                    if(distance<1000) {
-                        btn_cancel.setEnabled(false);
-                    }
-
                     if (distance<1000){
                         RequestStatus.setText("Be Ready Service Provider So Close");
+                        btn_cancel.setEnabled(false);
                     }else {
-                        RequestStatus.setText("Service Provider found:" + String.valueOf(distance)+"m");
+                        RequestStatus.setText("Service Provider Far from you:" + String.valueOf(distance)+"m");
                     }
                 }
             }
@@ -362,10 +346,9 @@ public class CustomerMapsActivity extends FragmentActivity implements OnMapReady
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
                 if (dataSnapshot.exists() && dataSnapshot.getChildrenCount()>0){
-                    //if alredy name same in db
                     Map<String , Object> map=(Map<String , Object>)dataSnapshot.getValue();
-                    //if any an correct plase cheke name db
-                    if (map.get("profileImageUrl")!=null) {
+
+                    if (map.get("profileImageUrl")!= null) {
                         Glide.with(getApplication()).load(map.get("profileImageUrl").toString()).into(mServiceProviderImage);
                     }
                     if (map.get("name")!=null){
@@ -404,7 +387,7 @@ public class CustomerMapsActivity extends FragmentActivity implements OnMapReady
     private DatabaseReference ServiceProviderHasEndedRef;
     private ValueEventListener ServiceProviderHasEndedRefListener;
 
-    private void WorkEnded(){   //****************************
+    private void WorkEnded(){
         ServiceProviderHasEndedRef = FirebaseDatabase.getInstance().getReference().child("Users").child("ServiceProvider").child(ServiceProviderFoundID).child("CustomerRequest").child("CustomerRequestID");
         ServiceProviderHasEndedRefListener = ServiceProviderHasEndedRef.addValueEventListener(new ValueEventListener() {
             @Override
@@ -434,6 +417,7 @@ public class CustomerMapsActivity extends FragmentActivity implements OnMapReady
         DatabaseReference ref = FirebaseDatabase.getInstance().getReference("CustomerRequest");
         GeoFire geoFire = new GeoFire(ref);
         geoFire.removeLocation(CustomerId);
+        //
         if (CustomerLocationMarker != null) {
             CustomerLocationMarker.remove();
         }
@@ -441,12 +425,12 @@ public class CustomerMapsActivity extends FragmentActivity implements OnMapReady
             ServiceProviderMarker.remove();
         }
 
-        Toast.makeText(getApplicationContext(),"  The Request has been Canceled " ,Toast.LENGTH_LONG).show();
+        Toast.makeText(getApplicationContext(),"The Request has been Canceled" ,Toast.LENGTH_LONG).show();
 
         mServiceProviderInfo.setVisibility(View.GONE);
         mServiceProviderInfoTop.setVisibility(View.GONE);
-        mServiceProviderPhone.setText("");  //***********************
-        mServiceProviderName.setText("");   //***********************
+        mServiceProviderPhone.setText("");
+        mServiceProviderName.setText("");
         mServiceProviderImage.setImageResource(R.drawable.profile);
         DatabaseReference ServiceDetails = FirebaseDatabase.getInstance().getReference().child("Users").child("Customer").child(CustomerId);
         ServiceDetails.child("ProblemImage").setValue("https://firebasestorage.googleapis.com/v0/b/publicservices-f6743.appspot.com/o/no_image.png?alt=media&token=1f18abbd-eb33-45d6-9d8e-ca1f522b42f8");
@@ -460,16 +444,21 @@ public class CustomerMapsActivity extends FragmentActivity implements OnMapReady
     //========================================================================================================
 
 
-    public void endWork() {  //****************************
+    public void endWork() {
         requestBol = false;
         geoQuery.removeAllListeners();
+
+        ServiceProviderHasEndedRef = FirebaseDatabase.getInstance().getReference().child("Users").child("ServiceProvider").child(ServiceProviderFoundID).child("CustomerRequest").child("CustomerRequestID");
+
         ServiceProviderLocationRef.removeEventListener(ServiceProviderLocationRefListener);
         ServiceProviderHasEndedRef.removeEventListener(ServiceProviderHasEndedRefListener);
+
         if (ServiceProviderFoundID != null) {
             DatabaseReference ServiceProviderRef = FirebaseDatabase.getInstance().getReference().child("Users").child("ServiceProvider").child(ServiceProviderFoundID).child("CustomerRequest");
             ServiceProviderRef.removeValue();
             ServiceProviderFoundID = null;
         }
+
         ServiceProviderFound = false;
         radius = 1;
         String CustomerId = FirebaseAuth.getInstance().getCurrentUser().getUid();
@@ -513,6 +502,7 @@ public class CustomerMapsActivity extends FragmentActivity implements OnMapReady
         buildGoogleApiClient();
         mMap.setMyLocationEnabled(true);
     }
+
     protected synchronized void buildGoogleApiClient(){
         mGoogleApiClient = new GoogleApiClient.Builder(this)
                 .addConnectionCallbacks(this)
@@ -521,6 +511,7 @@ public class CustomerMapsActivity extends FragmentActivity implements OnMapReady
                 .build();
         mGoogleApiClient.connect();
     }
+
     @Override
     public void onLocationChanged(Location location) {
         if(getApplicationContext()!=null){
@@ -532,6 +523,7 @@ public class CustomerMapsActivity extends FragmentActivity implements OnMapReady
             mMap.getUiSettings().setZoomControlsEnabled(true);
         }
     }
+
     @Override
     public void onConnected(@Nullable Bundle bundle) {
         mLocationRequest = new LocationRequest();
@@ -539,16 +531,18 @@ public class CustomerMapsActivity extends FragmentActivity implements OnMapReady
         mLocationRequest.setFastestInterval(1000);
         mLocationRequest.setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);
 
+        //check that we have all Permissions
         if (ActivityCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
             ActivityCompat.requestPermissions(CustomerMapsActivity.this,new String[]{android.Manifest.permission.ACCESS_FINE_LOCATION},LOCATION_REQUEST_CODE);
         }
+        //refresh the location every 1000ms
         LocationServices.FusedLocationApi.requestLocationUpdates(mGoogleApiClient, mLocationRequest, this);
     }
+
     @Override
     public void onConnectionSuspended(int i) {}
     @Override
-    public void onConnectionFailed(@NonNull ConnectionResult connectionResult) {
-    }
+    public void onConnectionFailed(@NonNull ConnectionResult connectionResult) {}
 
     final int LOCATION_REQUEST_CODE = 1;
     @Override
@@ -570,6 +564,9 @@ public class CustomerMapsActivity extends FragmentActivity implements OnMapReady
     protected void onStop() {
         super.onStop();
     }
+
+
+
     @Override
     public void onBackPressed() {
             if(ServiceProviderFoundID != null){

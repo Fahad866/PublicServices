@@ -25,7 +25,7 @@ import java.util.Locale;
 import java.util.Map;
 
 public class historyServiceProviderSingle extends AppCompatActivity{
-    private String RequestId , CurrentCustomerId ,CustomerID , ServiceProviderId,CustomerOrServiceProvider;
+    private String RequestId  ,CustomerID ;
     private TextView date;
     private TextView CustomerPhone;
     private TextView CustomerName;
@@ -45,11 +45,10 @@ public class historyServiceProviderSingle extends AppCompatActivity{
         CustomerName = (TextView) findViewById(R.id.servicename);
 
 
-        CurrentCustomerId = FirebaseAuth.getInstance().getCurrentUser().getUid();
         RequestId = getIntent().getExtras().getString("RequestId");
         historyRequestInfoDb = FirebaseDatabase.getInstance().getReference().child("history").child(RequestId);
         getRequestInfo();
-        getCustomerInfo();
+        getPrice();
     }
 
     public void CheckingInternetConnection() {
@@ -80,17 +79,8 @@ public class historyServiceProviderSingle extends AppCompatActivity{
                     for (DataSnapshot child : dataSnapshot.getChildren()){
                         if (child.getKey().equals("Customer")){
                             CustomerID = child.getValue().toString();
-                            if (!CustomerID.equals(CurrentCustomerId)){
-                                CustomerOrServiceProvider = "ServiceProvider";
-                                getCustomerInf("Customer",CustomerID);
-                            }
-                        }
-                        if (child.getKey().equals("ServiceProvider")){
-                            ServiceProviderId = child.getValue().toString();
-                            if (!ServiceProviderId.equals(CurrentCustomerId)){
-                                CustomerOrServiceProvider = "Customer";
-                                getCustomerInf("ServiceProvider",ServiceProviderId);
-                            }
+                            getCustomerInfo(CustomerID);
+
                         }
 
                         if (child.getKey().equals("timestamp")){
@@ -122,8 +112,8 @@ public class historyServiceProviderSingle extends AppCompatActivity{
 
 
 
-    private void getCustomerInf(String CustomerOrServiceProvider, String otherCustomerId) {
-        DatabaseReference CustomerDb = FirebaseDatabase.getInstance().getReference().child("Users").child(CustomerOrServiceProvider).child(otherCustomerId);
+    private void getCustomerInfo(String otherCustomerId) {
+        DatabaseReference CustomerDb = FirebaseDatabase.getInstance().getReference().child("Users").child("Customer").child(otherCustomerId);
         CustomerDb.addListenerForSingleValueEvent(new ValueEventListener(){
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
@@ -148,7 +138,7 @@ public class historyServiceProviderSingle extends AppCompatActivity{
             }
         });
     }
-    private void getCustomerInfo(){
+    private void getPrice(){
         historyRequestInfoDb.addListenerForSingleValueEvent(new ValueEventListener(){
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {

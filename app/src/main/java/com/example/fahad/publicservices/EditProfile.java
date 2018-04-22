@@ -131,18 +131,23 @@ public class EditProfile extends AppCompatActivity {
         //save image in db
         if (resultUri!=null){
             StorageReference filePath = FirebaseStorage.getInstance().getReference().child("Profile_Image ").child(ID);
-            Bitmap bitmap=null;
+
+            Bitmap bitmap = null;
             try {
+                //get image from the URI
                 bitmap = MediaStore.Images.Media.getBitmap(getApplication().getContentResolver(),resultUri);
             } catch (IOException e) {
                 e.printStackTrace();
             }
 
             //image compression
-            ByteArrayOutputStream boas = new ByteArrayOutputStream();
-            bitmap.compress(Bitmap.CompressFormat.JPEG,20,boas);
-            byte[] data = boas.toByteArray();
-            UploadTask uploadTask =filePath.putBytes(data);
+            ByteArrayOutputStream baos = new ByteArrayOutputStream();
+            //compress the image to format JPEG with quality of 20
+            bitmap.compress(Bitmap.CompressFormat.JPEG,20,baos);
+            //save the ByteArrayOutputStream baos into array
+            byte[] data = baos.toByteArray();
+            //upload the image as array of byte
+            UploadTask uploadTask = filePath.putBytes(data);
             uploadTask.addOnFailureListener(new OnFailureListener() {
                 @Override
                 public void onFailure(@NonNull Exception e) {

@@ -171,7 +171,7 @@
             android:layout_height="wrap_content"
             android:layout_width="match_parent"
             android:text="Complete"
-            android:id="@+id/WorkStatus"/>
+            android:id="@+id/btnComplete"/>
     </LinearLayout>
 
 

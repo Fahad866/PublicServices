@@ -4,29 +4,28 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.net.ConnectivityManager;
+import android.os.Bundle;
 import android.provider.Settings;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
-import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import com.example.fahad.publicservices.serviceProviderH.HisoryObjectS;
+import android.text.format.DateFormat;
+import com.example.fahad.publicservices.historyRecycelerView.HisoryObject;
 import com.example.fahad.publicservices.serviceProviderH.serviceHadapter;
-import com.example.fahad.publicservices.serviceProviderH.serviceHviewholders;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
-import android.text.format.DateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Locale;
 
 public class historyServiceProvider extends AppCompatActivity {
 
-    private String CustomerOrServiceProvider  , CustomerId;
+    private String ServiceProviderId;
     private RecyclerView mhistoryRecycelerView;
     private RecyclerView.Adapter mhistoryAdapter ;
     private RecyclerView.LayoutManager mhistoryLayoutManager;
@@ -42,14 +41,16 @@ public class historyServiceProvider extends AppCompatActivity {
         mhistoryRecycelerView = (RecyclerView)findViewById(R.id.RecycelerView);
         mhistoryRecycelerView.setNestedScrollingEnabled(false);
         mhistoryRecycelerView.setHasFixedSize(true);
+
         mhistoryLayoutManager = new LinearLayoutManager(historyServiceProvider.this);
         mhistoryRecycelerView.setLayoutManager(mhistoryLayoutManager);
-        mhistoryAdapter = new serviceHadapter(getDataHistory(), historyServiceProvider.this);//pass the context and itemList
+
+        mhistoryAdapter = new serviceHadapter(getDataHistory(), historyServiceProvider.this);
         mhistoryRecycelerView.setAdapter(mhistoryAdapter);
 
-        CustomerOrServiceProvider = getIntent().getExtras().getString("CustomerOrServiceProvider");//this when recive from user menu
-        CustomerId = FirebaseAuth.getInstance().getCurrentUser().getUid();
-        getCustomerHistoryids();
+
+        ServiceProviderId = FirebaseAuth.getInstance().getCurrentUser().getUid();
+        getServiceProviderHistoryids();
 
     }
 
@@ -73,9 +74,9 @@ public class historyServiceProvider extends AppCompatActivity {
         }
     }
 
-    private void getCustomerHistoryids() {
-        DatabaseReference CustomerHistoryDatabase = FirebaseDatabase.getInstance().getReference().child("Users").child(CustomerOrServiceProvider).child(CustomerId).child("history");
-        CustomerHistoryDatabase.addListenerForSingleValueEvent(new ValueEventListener() {
+    private void getServiceProviderHistoryids() {
+        DatabaseReference ServiceProviderHistoryDatabase = FirebaseDatabase.getInstance().getReference().child("Users").child("ServiceProvider").child(ServiceProviderId).child("history");
+        ServiceProviderHistoryDatabase.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
                 if(dataSnapshot.exists()){
@@ -102,7 +103,7 @@ public class historyServiceProvider extends AppCompatActivity {
                             timestamp = Long.valueOf(child.getValue().toString());
                         }
                     }
-                    HisoryObjectS obj = new HisoryObjectS(RequestId,getDate(timestamp));
+                    HisoryObject obj = new HisoryObject(RequestId,getDate(timestamp));
                     resultHistory.add(obj);
                     mhistoryAdapter.notifyDataSetChanged();
                 }
@@ -114,15 +115,15 @@ public class historyServiceProvider extends AppCompatActivity {
     }
 
     private String getDate(Long timestamp) {
-        Calendar cal = Calendar.getInstance(Locale.getDefault());//calender get instsnce//local location of user
+        Calendar cal = Calendar.getInstance(Locale.getDefault());
         cal.setTimeInMillis(timestamp*1000);
-        String date = DateFormat.format("dd-MM-yyyy hh:mm" ,cal).toString();//arrange the time like yy-dd-mm
+        String date = DateFormat.format("dd-MM-yyyy hh:mm" ,cal).toString();
         return date;
     }
 
 
-    private ArrayList resultHistory= new ArrayList<HisoryObjectS>();
-    private ArrayList<HisoryObjectS> getDataHistory() {
-        return resultHistory;//for
+    private ArrayList resultHistory= new ArrayList<HisoryObject>();
+    private ArrayList<HisoryObject> getDataHistory() {
+        return resultHistory;
     }
 }

@@ -6,15 +6,18 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import com.example.fahad.publicservices.R;
+import com.example.fahad.publicservices.historyRecycelerView.HisoryObject;
+
+import java.util.ArrayList;
 import java.util.List;
 
 
 public class serviceHadapter  extends RecyclerView.Adapter<serviceHviewholders>{
-    private List<HisoryObjectS> itemList;
+    private ArrayList<HisoryObject> itemList;
     private Context context;
 
     // functioun for populate
-    public serviceHadapter(List<HisoryObjectS> itemList, Context context) {
+    public serviceHadapter(ArrayList<HisoryObject> itemList, Context context) {
         this.itemList = itemList;
         this.context = context;
     }
@@ -29,7 +32,7 @@ public class serviceHadapter  extends RecyclerView.Adapter<serviceHviewholders>{
 
     @Override
     public void onBindViewHolder(serviceHviewholders holder, int position) {
-        holder.RequestId.setText(itemList.get(position).getRequestId());  //**************************
+        holder.RequestId.setText(itemList.get(position).getRequestId());
         holder.time.setText(itemList.get(position).getTime());
     }
     @Override

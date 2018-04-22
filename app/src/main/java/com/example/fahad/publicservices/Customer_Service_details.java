@@ -52,8 +52,8 @@ public class Customer_Service_details extends AppCompatActivity {
         btnConfirm = (Button)findViewById(R.id.Confirm);
 
 
-        CustomerID= FirebaseAuth.getInstance().getCurrentUser().getUid();
-        mCustomerDatabase= FirebaseDatabase.getInstance().getReference().child("Users").child("Customer").child(CustomerID);
+        CustomerID = FirebaseAuth.getInstance().getCurrentUser().getUid();
+        mCustomerDatabase = FirebaseDatabase.getInstance().getReference().child("Users").child("Customer").child(CustomerID);
 
         if(mCustomerDatabase.child("TextProblem") != null){
             mCustomerDatabase.child("TextProblem").setValue("No Description");
@@ -115,8 +115,8 @@ public class Customer_Service_details extends AppCompatActivity {
         Map CustomerInfo = new HashMap();
         if(!TextProblem.equals(""))
             CustomerInfo.put("TextProblem",TextProblem);
-
         mCustomerDatabase.updateChildren(CustomerInfo);
+
         if (resultUri != null){//save image in db
             StorageReference filePath = FirebaseStorage.getInstance().getReference().child("Image Problem").child(CustomerID);//like dbrefrence
             Bitmap bitmap = null;
@@ -157,7 +157,7 @@ public class Customer_Service_details extends AppCompatActivity {
     @Override//for image view for user
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-        if (requestCode ==1 && resultCode == Activity.RESULT_OK){
+        if (requestCode == 1 && resultCode == Activity.RESULT_OK){
             final Uri imageUri = data.getData();
             resultUri = imageUri;
             mImageProblem.setImageURI(resultUri);
